@@ -3,7 +3,6 @@ package umoo.wang.beanmanager.client.socket;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -33,7 +32,7 @@ public class Client {
 						pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
 						pipeline.addLast(new MainHandler());
 					}
-				}).option(ChannelOption.SO_BACKLOG, 128);
+				});
 
 		try {
 			ChannelFuture f = bootstrap.connect("localhost", 9999).sync();

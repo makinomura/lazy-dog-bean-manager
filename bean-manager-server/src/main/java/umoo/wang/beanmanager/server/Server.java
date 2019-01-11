@@ -37,8 +37,7 @@ public class Server {
 						pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
 						pipeline.addLast(new MainInHandler());
 					}
-				}).option(ChannelOption.SO_BACKLOG, 128)
-				.childOption(ChannelOption.SO_KEEPALIVE, true);
+				}).childOption(ChannelOption.SO_KEEPALIVE, true);
 
 		try {
 			ChannelFuture f = bootstrap.bind("localhost", 9999).sync();

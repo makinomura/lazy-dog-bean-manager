@@ -27,7 +27,8 @@ public class ContextHolder {
 					}
 				});
 
-				System.out.println(contexts.size());
+				System.out.println(
+						"send update msg to " + contexts.size() + " client");
 
 				try {
 					Thread.sleep(1000);

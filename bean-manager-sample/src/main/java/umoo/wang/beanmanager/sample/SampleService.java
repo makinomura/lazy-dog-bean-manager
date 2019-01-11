@@ -15,6 +15,7 @@ public class SampleService implements FieldUpdateListener {
 
 	@Override
 	public void onUpdate(String fieldName, String newValue) {
-		System.out.println("update " + fieldName + " to " + newValue);
+		System.out.println("update " + fieldName + " to " + newValue
+				+ ", now time is " + time);
 	}
 }

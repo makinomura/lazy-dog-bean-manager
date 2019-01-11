@@ -20,9 +20,9 @@ public class BeanManagerAutoConfiguration {
 					String beanName) throws BeansException {
 				if (bean instanceof FieldUpdateListener) {
 					BeanManager.registerListener(((FieldUpdateListener) bean));
-				} else {
-					BeanManager.manage(bean);
 				}
+
+				BeanManager.manage(bean);
 				return bean;
 			}
 		};

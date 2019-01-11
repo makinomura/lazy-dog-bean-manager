@@ -45,23 +45,23 @@ public class BeanManager {
 	}
 
 	public static int update(String fieldName, String newValue) {
-		listeners.forEach(listener -> listener.onUpdate(fieldName, newValue));
 
 		List<FieldConfig> fieldConfigs = fieldConfigMap.get(fieldName);
 
-		if (fieldConfigs == null) {
-			return 0;
-		}
+		int effectFields = 0;
 
-		if (fieldConfigs.size() > 0) {
+		if (fieldConfigs != null && fieldConfigs.size() > 0) {
 			for (FieldConfig fieldConfig : fieldConfigs) {
 				Class clazz = fieldConfig.getClazz();
 				fieldConfig.apply(ConverterFactory.withType(clazz)
 						.convert(newValue, clazz));
 			}
+
+			effectFields = fieldConfigs.size();
 		}
 
-		return fieldConfigs.size();
+		listeners.forEach(listener -> listener.onUpdate(fieldName, newValue));
+		return effectFields;
 	}
 
 	private static <T> BeanConfig<T> buildBeanConfig(T bean) {
