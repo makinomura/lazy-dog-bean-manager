@@ -20,7 +20,9 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
+        <dependency>
+            <groupId>umoo.wang.lazydog</groupId>
+            <artifactId>bean-manager-common</artifactId>
+        </dependency>
     </dependencies>
-
-
 </project>

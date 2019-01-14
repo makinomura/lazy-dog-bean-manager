@@ -1,7 +1,7 @@
-package umoo.wang.beanmanager.client.converter.impl;
+package umoo.wang.beanmanager.common.converter.impl;
 
 import com.alibaba.fastjson.JSON;
-import umoo.wang.beanmanager.client.converter.Converter;
+import umoo.wang.beanmanager.common.converter.Converter;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

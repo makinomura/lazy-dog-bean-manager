@@ -18,7 +18,7 @@ public class Client {
 	private static final EventLoopGroup workerGroup = new NioEventLoopGroup(
 			100);
 
-	public static void init() {
+	public static void init(String host, int port) {
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(workerGroup).channel(NioSocketChannel.class)
 				.handler(new ChannelInitializer<SocketChannel>() {
@@ -33,7 +33,7 @@ public class Client {
 				});
 
 		try {
-			ChannelFuture f = bootstrap.connect("localhost", 9999).sync();
+			ChannelFuture f = bootstrap.connect(host, port).sync();
 		} catch (InterruptedException e) {
 			workerGroup.shutdownGracefully();
 		}

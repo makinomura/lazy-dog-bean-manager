@@ -1,6 +1,6 @@
 package umoo.wang.beanmanager.client;
 
-import umoo.wang.beanmanager.client.converter.ConverterFactory;
+import umoo.wang.beanmanager.common.converter.ConverterFactory;
 import umoo.wang.beanmanager.client.socket.Client;
 
 import java.lang.reflect.Field;
@@ -101,7 +101,7 @@ public class BeanManager {
 				field, beanConfig);
 	}
 
-	public static void start() {
-		Client.init();
+	public static void start(String host, int port) {
+		Client.init(host, port);
 	}
 }

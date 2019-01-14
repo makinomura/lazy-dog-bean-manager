@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.client.converter;
+package umoo.wang.beanmanager.common.converter;
 
 /**
  * Created by yuanchen on 2019/01/02.

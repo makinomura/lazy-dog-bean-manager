@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.message.util;
+package umoo.wang.beanmanager.common.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

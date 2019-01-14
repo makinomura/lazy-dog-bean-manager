@@ -3,11 +3,11 @@ package umoo.wang.beanmanager.client.socket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import umoo.wang.beanmanager.client.BeanManager;
+import umoo.wang.beanmanager.common.util.EnumUtil;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandTargetEnum;
 import umoo.wang.beanmanager.message.clientcommand.ClientCommandTypeEnum;
 import umoo.wang.beanmanager.message.clientcommand.FieldUpdateMessage;
-import umoo.wang.beanmanager.message.util.EnumUtil;
 
 /**
  * Created by yuanchen on 2019/01/11.

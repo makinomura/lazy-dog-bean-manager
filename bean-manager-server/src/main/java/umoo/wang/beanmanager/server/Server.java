@@ -23,6 +23,10 @@ public class Server {
 			100);
 
 	public static void main(String[] args) {
+		String host = PropertyResolver.read("lazydog.server.host");
+		Integer port = PropertyResolver.read("lazydog.server.port",
+				Integer.class);
+
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		bootstrap.group(bossGroup, workerGroup)
 				.channel(NioServerSocketChannel.class)
@@ -38,7 +42,7 @@ public class Server {
 				}).childOption(ChannelOption.SO_KEEPALIVE, true);
 
 		try {
-			ChannelFuture f = bootstrap.bind("localhost", 9999).sync();
+			ChannelFuture f = bootstrap.bind(host, port).sync();
 		} catch (InterruptedException e) {
 			bossGroup.shutdownGracefully();
 			workerGroup.shutdownGracefully();

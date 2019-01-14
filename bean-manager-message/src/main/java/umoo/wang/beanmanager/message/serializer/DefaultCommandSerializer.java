@@ -1,14 +1,14 @@
 package umoo.wang.beanmanager.message.serializer;
 
 import com.alibaba.fastjson.JSON;
+import umoo.wang.beanmanager.common.util.EnumUtil;
+import umoo.wang.beanmanager.common.util.StringUtil;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandTargetEnum;
 import umoo.wang.beanmanager.message.clientcommand.ClientCommandTypeEnum;
-import umoo.wang.beanmanager.message.util.EnumUtil;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 /**
  * Created by yuanchen on 2019/01/14.
@@ -63,7 +63,7 @@ public class DefaultCommandSerializer implements CommandSerializer {
 				}
 			}
 
-			if (!Objects.equals(commandObject, "")) {
+			if (!StringUtil.isNullOrEmpty(commandObjectClazz)) {
 				Object o = JSON.parseObject(commandObject,
 						Class.forName(commandObjectClazz));
 				return new Command<>(commandTarget, commandType, o);

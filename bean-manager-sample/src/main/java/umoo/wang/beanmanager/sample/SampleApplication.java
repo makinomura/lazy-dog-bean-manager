@@ -19,7 +19,7 @@ public class SampleApplication {
 
 		ConfigurableApplicationContext context = app.run();
 
-		BeanManager.start();
+		BeanManager.start("localhost", 9999);
 		Thread.sleep(10000);
 	}
 }

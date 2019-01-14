@@ -1,6 +1,7 @@
-package umoo.wang.beanmanager.client.converter;
+package umoo.wang.beanmanager.common.converter;
 
-import umoo.wang.beanmanager.client.converter.impl.GenericConverterImpl;
+import umoo.wang.beanmanager.common.converter.impl.GenericConverterImpl;
+import umoo.wang.beanmanager.common.exception.ManagerException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,10 +13,10 @@ public class ConverterFactory {
 	private static Map<String, Converter> converterMap = new HashMap<>();
 
 	static {
-		build(GenericConverterImpl.class);
+		register(GenericConverterImpl.class);
 	}
 
-	public static <T extends Converter> Converter build(Class<T> clazz) {
+	public static <T extends Converter> Converter register(Class<T> clazz) {
 		return converterMap.computeIfAbsent(clazz.getName(), name -> {
 			try {
 				return clazz.newInstance();
@@ -32,6 +33,7 @@ public class ConverterFactory {
 			}
 		}
 
-		throw new RuntimeException();
+		throw new ManagerException(
+				"No converters found for type: " + requireType.getName());
 	}
 }
