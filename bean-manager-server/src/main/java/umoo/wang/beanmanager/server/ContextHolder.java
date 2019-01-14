@@ -1,8 +1,8 @@
 package umoo.wang.beanmanager.server;
 
-import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
-import umoo.wang.beanmanager.message.FieldUpdateMessage;
+import umoo.wang.beanmanager.message.clientcommand.ClientFieldUpdateCommand;
+import umoo.wang.beanmanager.message.clientcommand.FieldUpdateMessage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,7 @@ public class ContextHolder {
 
 				contexts.values().forEach(ctx -> {
 					try {
-						ctx.writeAndFlush(JSON.toJSONString(msg));
+						ctx.writeAndFlush(new ClientFieldUpdateCommand(msg));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

@@ -8,9 +8,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
+import umoo.wang.beanmanager.message.codec.CommandDecoder;
+import umoo.wang.beanmanager.message.codec.CommandEncoder;
 
 /**
  * Created by yuanchen on 2019/01/11.
@@ -27,10 +26,9 @@ public class Client {
 					protected void initChannel(SocketChannel channel)
 							throws Exception {
 						ChannelPipeline pipeline = channel.pipeline();
-						pipeline.addLast(new StringDecoder());
-
-						pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
-						pipeline.addLast(new MainHandler());
+						pipeline.addLast(new CommandDecoder());
+						pipeline.addLast(new CommandEncoder());
+						pipeline.addLast(new MainInHandler());
 					}
 				});
 

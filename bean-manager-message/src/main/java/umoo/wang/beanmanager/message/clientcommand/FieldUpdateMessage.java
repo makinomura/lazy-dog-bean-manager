@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.message;
+package umoo.wang.beanmanager.message.clientcommand;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
