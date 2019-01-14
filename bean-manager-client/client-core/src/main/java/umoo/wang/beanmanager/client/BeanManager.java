@@ -1,7 +1,6 @@
 package umoo.wang.beanmanager.client;
 
 import umoo.wang.beanmanager.common.converter.ConverterFactory;
-import umoo.wang.beanmanager.client.socket.Client;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -72,24 +71,15 @@ public class BeanManager {
 		BeanConfig<T> beanConfig = new BeanConfig<>(Manage.UNNAMED, clazz, bean,
 				fieldConfigs);
 
-		Manage clazzManage = clazz.getAnnotation(Manage.class);
-		if (clazzManage != null) {
-			beanConfig.setBeanName(clazzManage.name());
-
-			fieldConfigs.addAll(Arrays.stream(clazz.getDeclaredFields())
-					.map(field -> getFieldConfig(beanConfig, field))
-					.collect(Collectors.toList()));
-		} else {
-			fieldConfigs.addAll(Arrays.stream(clazz.getDeclaredFields())
-					.filter(field -> field.getAnnotation(Manage.class) != null)
-					.map(field -> getFieldConfig(beanConfig, field))
-					.collect(Collectors.toList()));
-		}
+		fieldConfigs.addAll(Arrays.stream(clazz.getDeclaredFields())
+				.filter(field -> field.getAnnotation(Manage.class) != null)
+				.map(field -> buildFieldConfig(beanConfig, field))
+				.collect(Collectors.toList()));
 
 		return beanConfig;
 	}
 
-	private static <T> FieldConfig<Object, T> getFieldConfig(
+	private static <T> FieldConfig<Object, T> buildFieldConfig(
 			BeanConfig<T> beanConfig, Field field) {
 		String fieldName = Manage.UNNAMED;
 		Manage fieldManage = field.getAnnotation(Manage.class);
@@ -99,9 +89,5 @@ public class BeanManager {
 
 		return new FieldConfig<>(fieldName, (Class<Object>) field.getType(),
 				field, beanConfig);
-	}
-
-	public static void start(String host, int port) {
-		Client.init(host, port);
 	}
 }

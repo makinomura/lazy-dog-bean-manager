@@ -10,6 +10,7 @@ import umoo.wang.beanmanager.client.Manage;
 @Service
 public class SampleService implements FieldUpdateListener {
 
+
 	@Manage(name = "time")
 	private String time;
 

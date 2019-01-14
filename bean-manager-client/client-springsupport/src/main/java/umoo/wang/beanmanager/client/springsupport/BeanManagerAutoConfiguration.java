@@ -27,4 +27,9 @@ public class BeanManagerAutoConfiguration {
 			}
 		};
 	}
+
+	@Bean
+	public ApplicationListener startBeanManager() {
+		return new ApplicationListener();
+	}
 }

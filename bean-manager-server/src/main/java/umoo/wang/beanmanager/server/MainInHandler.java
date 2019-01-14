@@ -5,6 +5,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandTargetEnum;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
@@ -16,6 +18,8 @@ import java.net.InetSocketAddress;
  * Created by yuanchen on 2019/01/11.
  */
 public class MainInHandler extends ChannelInboundHandlerAdapter {
+	private static final Logger logger = LoggerFactory.getLogger(Server.class);
+
 	ChannelGroup channels = new DefaultChannelGroup("clients",
 			GlobalEventExecutor.INSTANCE);
 
@@ -36,11 +40,11 @@ public class MainInHandler extends ChannelInboundHandlerAdapter {
 			long timestamp = ((ServerHeartBeatMessage) ((Command) msg)
 					.getCommandObject()).getTimestamp();
 
-			System.out.println("receive heart-beat package from "
+			logger.info("Receive heart-beat package from "
 					+ buildContextKey(ctx) + " ,duration :"
 					+ (System.currentTimeMillis() - timestamp) + "ms");
 		} else {
-			System.out.println(command);
+			logger.info(command.toString());
 		}
 
 	}

@@ -21,6 +21,10 @@
             <artifactId>fastjson</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>umoo.wang.lazydog</groupId>
             <artifactId>bean-manager-common</artifactId>
         </dependency>

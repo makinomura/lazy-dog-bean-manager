@@ -9,6 +9,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.PropertyResolver;
 import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 
@@ -21,6 +24,8 @@ public class Server {
 			Runtime.getRuntime().availableProcessors() * 2);
 	private static final EventLoopGroup workerGroup = new NioEventLoopGroup(
 			100);
+
+	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
 	public static void main(String[] args) {
 		String host = PropertyResolver.read("lazydog.server.host");
@@ -42,7 +47,9 @@ public class Server {
 				}).childOption(ChannelOption.SO_KEEPALIVE, true);
 
 		try {
-			ChannelFuture f = bootstrap.bind(host, port).sync();
+			ChannelFuture f = bootstrap.bind(host, port);
+			logger.info("Server start...");
+			f.sync();
 		} catch (InterruptedException e) {
 			bossGroup.shutdownGracefully();
 			workerGroup.shutdownGracefully();

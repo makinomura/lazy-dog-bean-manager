@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.server;
+package umoo.wang.beanmanager.common;
 
 import umoo.wang.beanmanager.common.converter.ConverterFactory;
 import umoo.wang.beanmanager.common.exception.ManagerException;
