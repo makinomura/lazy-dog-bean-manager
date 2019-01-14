@@ -1,0 +1,26 @@
+package umoo.wang.beanmanager.message.server;
+
+import umoo.wang.beanmanager.message.server.message.ServerHeartBeatMessage;
+
+/**
+ * Created by yuanchen on 2019/01/14.
+ */
+public enum ServerCommandTypeEnum {
+	HEART_BEAT(1, ServerHeartBeatMessage.class.getName());
+
+	private String clazz;
+	private int value;
+
+	ServerCommandTypeEnum(int value, String clazz) {
+		this.clazz = clazz;
+		this.value = value;
+	}
+
+	public int value() {
+		return this.value;
+	}
+
+	public String clazz() {
+		return this.clazz;
+	}
+}

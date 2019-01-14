@@ -6,8 +6,8 @@ import umoo.wang.beanmanager.client.BeanManager;
 import umoo.wang.beanmanager.common.util.EnumUtil;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandTargetEnum;
-import umoo.wang.beanmanager.message.clientcommand.ClientCommandTypeEnum;
-import umoo.wang.beanmanager.message.clientcommand.FieldUpdateMessage;
+import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
+import umoo.wang.beanmanager.message.client.message.ClientFieldUpdateMessage;
 
 /**
  * Created by yuanchen on 2019/01/11.
@@ -33,7 +33,7 @@ public class MainInHandler extends ChannelInboundHandlerAdapter {
 		if (clientCommandTypeEnum != null) {
 			switch (clientCommandTypeEnum) {
 			case UPDATE_FIELD:
-				FieldUpdateMessage message = (FieldUpdateMessage) command
+				ClientFieldUpdateMessage message = (ClientFieldUpdateMessage) command
 						.getCommandObject();
 				BeanManager.update(message.getFieldName(),
 						message.getNewValue());

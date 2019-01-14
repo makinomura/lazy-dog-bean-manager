@@ -25,4 +25,10 @@ public class Command<T> {
 	public T getCommandObject() {
 		return commandObj;
 	}
+
+	@Override
+	public String toString() {
+		return "Command{" + "commandTarget=" + commandTarget + ", commandType="
+				+ commandType + ", commandObj=" + commandObj + '}';
+	}
 }

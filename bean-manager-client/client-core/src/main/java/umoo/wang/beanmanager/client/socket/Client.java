@@ -31,10 +31,17 @@ public class Client {
 						pipeline.addLast(new MainInHandler());
 					}
 				});
-
+		HeartBeatTask heartBeatTask = null;
 		try {
 			ChannelFuture f = bootstrap.connect(host, port).sync();
-		} catch (InterruptedException e) {
+
+			heartBeatTask = new HeartBeatTask(f.channel(), 5000);
+			heartBeatTask.start();
+		} catch (Exception e) {
+			if (heartBeatTask != null) {
+				heartBeatTask.shutdown();
+			}
+
 			workerGroup.shutdownGracefully();
 		}
 	}

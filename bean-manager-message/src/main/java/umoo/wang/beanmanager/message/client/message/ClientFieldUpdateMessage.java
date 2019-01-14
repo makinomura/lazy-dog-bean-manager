@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.message.clientcommand;
+package umoo.wang.beanmanager.message.client.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 @Data
 @AllArgsConstructor
-public class FieldUpdateMessage implements Serializable {
+public class ClientFieldUpdateMessage implements Serializable {
 	private String fieldName;
 	private String newValue;
 }

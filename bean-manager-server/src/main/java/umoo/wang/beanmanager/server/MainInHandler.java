@@ -5,6 +5,10 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import umoo.wang.beanmanager.message.Command;
+import umoo.wang.beanmanager.message.CommandTargetEnum;
+import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
+import umoo.wang.beanmanager.message.server.message.ServerHeartBeatMessage;
 
 import java.net.InetSocketAddress;
 
@@ -24,7 +28,21 @@ public class MainInHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
-		System.out.println(msg);
+		Command command = (Command) msg;
+
+		if (command.getCommandTarget() == CommandTargetEnum.SERVER.value()
+				&& command.getCommandType() == ServerCommandTypeEnum.HEART_BEAT
+						.value()) {
+			long timestamp = ((ServerHeartBeatMessage) ((Command) msg)
+					.getCommandObject()).getTimestamp();
+
+			System.out.println("receive heart-beat package from "
+					+ buildContextKey(ctx) + " ,duration :"
+					+ (System.currentTimeMillis() - timestamp) + "ms");
+		} else {
+			System.out.println(command);
+		}
+
 	}
 
 	@Override
