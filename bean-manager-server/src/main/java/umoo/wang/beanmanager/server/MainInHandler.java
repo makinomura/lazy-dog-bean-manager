@@ -1,7 +1,8 @@
 package umoo.wang.beanmanager.server;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandTargetEnum;
+import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
 import umoo.wang.beanmanager.message.server.message.ServerHeartBeatMessage;
 
@@ -17,10 +19,11 @@ import java.net.InetSocketAddress;
 /**
  * Created by yuanchen on 2019/01/11.
  */
-public class MainInHandler extends ChannelInboundHandlerAdapter {
+@ChannelHandler.Sharable
+public class MainInHandler extends SimpleChannelInboundHandler {
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
-	ChannelGroup channels = new DefaultChannelGroup("clients",
+	static ChannelGroup channels = new DefaultChannelGroup("clients",
 			GlobalEventExecutor.INSTANCE);
 
 	@Override
@@ -30,7 +33,7 @@ public class MainInHandler extends ChannelInboundHandlerAdapter {
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg)
+	public void channelRead0(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
 		Command command = (Command) msg;
 
@@ -38,11 +41,15 @@ public class MainInHandler extends ChannelInboundHandlerAdapter {
 				&& command.getCommandType() == ServerCommandTypeEnum.HEART_BEAT
 						.value()) {
 			long timestamp = ((ServerHeartBeatMessage) ((Command) msg)
-					.getCommandObject()).getTimestamp();
+					.getCommandObj()).getTimestamp();
 
 			logger.info("Receive heart-beat package from "
 					+ buildContextKey(ctx) + " ,duration :"
 					+ (System.currentTimeMillis() - timestamp) + "ms");
+
+			ctx.writeAndFlush(new Command<>(command.getCommandId(),
+					CommandTargetEnum.CLIENT.value(),
+					ClientCommandTypeEnum.ACK.value(), 200));
 		} else {
 			logger.info(command.toString());
 		}

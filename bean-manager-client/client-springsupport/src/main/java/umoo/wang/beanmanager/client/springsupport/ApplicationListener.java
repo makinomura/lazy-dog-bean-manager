@@ -1,15 +1,18 @@
 package umoo.wang.beanmanager.client.springsupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.ContextRefreshedEvent;
 import umoo.wang.beanmanager.client.socket.Client;
 import umoo.wang.beanmanager.common.PropertyResolver;
-import umoo.wang.beanmanager.common.exception.ClientException;
 
 /**
  * Created by yuanchen on 2019/01/14.
  */
 public class ApplicationListener implements
 		org.springframework.context.ApplicationListener<ContextRefreshedEvent> {
+	private static final Logger logger = LoggerFactory
+			.getLogger(ApplicationListener.class);
 	private boolean inited = false;
 
 	@Override
@@ -27,7 +30,7 @@ public class ApplicationListener implements
 			Client.start(host, port);
 			inited = true;
 		} catch (Exception e) {
-			throw ClientException.wrap(e);
+			logger.error("Error starting client!", e);
 		}
 	}
 }

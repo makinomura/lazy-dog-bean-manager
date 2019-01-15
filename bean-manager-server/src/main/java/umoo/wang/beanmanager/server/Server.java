@@ -12,13 +12,31 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.PropertyResolver;
+import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
+import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
 import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
+import umoo.wang.beanmanager.message.reply.ReplyInvoker;
+import umoo.wang.beanmanager.message.reply.ReplyRegister;
 
 /**
  * Created by yuanchen on 2019/01/11.
  */
 public class Server {
+	public static BeanFactory beanFactory = new SingletonBeanFactory();
+
+	static {
+		buildBeans();
+	}
+
+	private static void buildBeans() {
+		beanFactory.newBean(CommandDecoder.class);
+		beanFactory.newBean(CommandEncoder.class);
+		beanFactory.newBean(MainInHandler.class);
+		ReplyRegister register = beanFactory.newBean(ReplyRegister.class, 5,
+				5000L);
+		beanFactory.newBean(ReplyInvoker.class, register);
+	}
 
 	private static final EventLoopGroup bossGroup = new NioEventLoopGroup(
 			Runtime.getRuntime().availableProcessors() * 2);
@@ -40,9 +58,16 @@ public class Server {
 					protected void initChannel(SocketChannel channel)
 							throws Exception {
 						ChannelPipeline pipeline = channel.pipeline();
-						pipeline.addLast(new CommandDecoder());
-						pipeline.addLast(new CommandEncoder());
-						pipeline.addLast(new MainInHandler());
+						pipeline.addLast(
+								beanFactory.getBean(CommandDecoder.class));
+						pipeline.addLast(
+								beanFactory.getBean(ReplyInvoker.class));
+						pipeline.addLast(
+								beanFactory.getBean(CommandEncoder.class));
+						pipeline.addLast(
+								beanFactory.getBean(ReplyRegister.class));
+						pipeline.addLast(
+								beanFactory.getBean(MainInHandler.class));
 					}
 				}).childOption(ChannelOption.SO_KEEPALIVE, true);
 

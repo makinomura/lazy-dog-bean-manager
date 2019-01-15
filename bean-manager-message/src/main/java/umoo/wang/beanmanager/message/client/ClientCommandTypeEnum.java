@@ -6,8 +6,8 @@ import umoo.wang.beanmanager.message.client.message.ClientFieldUpdateMessage;
  * Created by yuanchen on 2019/01/14.
  */
 public enum ClientCommandTypeEnum {
-
-	UPDATE_FIELD(1, ClientFieldUpdateMessage.class.getName());
+	ACK(0, Integer.class.getName()), UPDATE_FIELD(1,
+			ClientFieldUpdateMessage.class.getName());
 
 	private String clazz;
 	private int value;

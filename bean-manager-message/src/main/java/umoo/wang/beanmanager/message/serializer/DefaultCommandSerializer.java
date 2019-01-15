@@ -1,6 +1,8 @@
 package umoo.wang.beanmanager.message.serializer;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import umoo.wang.beanmanager.common.converter.ConverterFactory;
 import umoo.wang.beanmanager.common.util.EnumUtil;
 import umoo.wang.beanmanager.common.util.StringUtil;
 import umoo.wang.beanmanager.message.Command;
@@ -22,64 +24,59 @@ public class DefaultCommandSerializer implements CommandSerializer {
 
 	@Override
 	public byte[] serialize(Command command) {
-		return String
-				.format("%s|%s|%s", command.getCommandTarget(),
-						command.getCommandType(),
-						JSON.toJSONString(command.getCommandObject()))
-				.getBytes(charset);
+		return JSON.toJSONString(command).getBytes(charset);
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Command deserialize(byte[] bytes) {
-		try {
-			String src = new String(bytes, charset);
+		Command command = JSON.parseObject(new String(bytes, charset),
+				new TypeReference<Command<String>>() {
+				});
 
-			String[] part = src.split("\\|");
+		int commandTarget = command.getCommandTarget();
+		int commandType = command.getCommandType();
 
-			int commandTarget = Integer.parseInt(part[0]);
-			int commandType = Integer.parseInt(part[1]);
-			String commandObject = src
-					.substring((part[0] + "|" + part[1] + "|").length());
+		CommandTargetEnum commandTargetEnum = EnumUtil.valueOf(commandTarget,
+				CommandTargetEnum.class);
 
-			CommandTargetEnum commandTargetEnum = EnumUtil
-					.valueOf(commandTarget, CommandTargetEnum.class);
+		String commandObjectClazz = "";
 
-			String commandObjectClazz = "";
-
-			if (commandTargetEnum != null) {
-				switch (commandTargetEnum) {
+		if (commandTargetEnum != null) {
+			switch (commandTargetEnum) {
 				case CLIENT:
 					ClientCommandTypeEnum clientCommandTypeEnum = EnumUtil
-							.valueOf(commandType, ClientCommandTypeEnum.class);
+						.valueOf(commandType, ClientCommandTypeEnum.class);
 
 					if (clientCommandTypeEnum != null) {
-						commandObjectClazz = clientCommandTypeEnum.clazz();
+					commandObjectClazz = clientCommandTypeEnum.clazz();
 					}
 
 					break;
 				case SERVER:
 					ServerCommandTypeEnum serverCommandTypeEnum = EnumUtil
-							.valueOf(commandType, ServerCommandTypeEnum.class);
+						.valueOf(commandType, ServerCommandTypeEnum.class);
 
 					if (serverCommandTypeEnum != null) {
-						commandObjectClazz = serverCommandTypeEnum.clazz();
+					commandObjectClazz = serverCommandTypeEnum.clazz();
 					}
 					break;
 				default:
 					break;
-				}
 			}
-
-			if (!StringUtil.isNullOrEmpty(commandObjectClazz)) {
-				Object o = JSON.parseObject(commandObject,
-						Class.forName(commandObjectClazz));
-				return new Command<>(commandTarget, commandType, o);
-			}
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
 
-		return null;
+		if (!StringUtil.isNullOrEmpty(commandObjectClazz)) {
+			try {
+				Class<?> objClazz = Class.forName(commandObjectClazz);
+				Object commandObj = ConverterFactory.withType(objClazz)
+						.convert((String) command.getCommandObj(), objClazz);
+				command.setCommandObj(commandObj);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return command;
 	}
 }

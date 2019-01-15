@@ -2,6 +2,7 @@ package umoo.wang.beanmanager.common.converter.impl;
 
 import com.alibaba.fastjson.JSON;
 import umoo.wang.beanmanager.common.converter.Converter;
+import umoo.wang.beanmanager.common.exception.ManagerException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -30,13 +31,17 @@ public class GenericConverterImpl implements Converter {
 					return (T) valueOf.invoke(null, value);
 				}
 
+			} catch (Exception ignore) {
+			}
+
+			try {
 				return JSON.parseObject(value, requireType);
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Exception ignore) {
 			}
 		}
 
-		throw new ClassCastException();
+		throw new ManagerException("Cannot covert '" + "' into type '"
+				+ requireType.getName() + "'!");
 	}
 
 	@Override

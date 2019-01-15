@@ -6,7 +6,8 @@ import umoo.wang.beanmanager.message.server.message.ServerHeartBeatMessage;
  * Created by yuanchen on 2019/01/14.
  */
 public enum ServerCommandTypeEnum {
-	HEART_BEAT(1, ServerHeartBeatMessage.class.getName());
+	ACK(0, Integer.class.getName()), HEART_BEAT(1,
+			ServerHeartBeatMessage.class.getName());
 
 	private String clazz;
 	private int value;

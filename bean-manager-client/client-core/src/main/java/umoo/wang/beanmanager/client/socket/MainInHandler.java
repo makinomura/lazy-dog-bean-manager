@@ -1,7 +1,10 @@
 package umoo.wang.beanmanager.client.socket;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.client.BeanManager;
 import umoo.wang.beanmanager.common.util.EnumUtil;
 import umoo.wang.beanmanager.message.Command;
@@ -9,13 +12,19 @@ import umoo.wang.beanmanager.message.CommandTargetEnum;
 import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
 import umoo.wang.beanmanager.message.client.message.ClientFieldUpdateMessage;
 
+import static umoo.wang.beanmanager.client.socket.Client.beanFactory;
+
 /**
  * Created by yuanchen on 2019/01/11.
  */
-public class MainInHandler extends ChannelInboundHandlerAdapter {
+@ChannelHandler.Sharable
+public class MainInHandler extends SimpleChannelInboundHandler {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(MainInHandler.class);
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg)
+	public void channelRead0(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
 		Command command = ((Command) msg);
 		if (command == null) {
@@ -34,7 +43,7 @@ public class MainInHandler extends ChannelInboundHandlerAdapter {
 			switch (clientCommandTypeEnum) {
 			case UPDATE_FIELD:
 				ClientFieldUpdateMessage message = (ClientFieldUpdateMessage) command
-						.getCommandObject();
+						.getCommandObj();
 				BeanManager.update(message.getFieldName(),
 						message.getNewValue());
 				break;
@@ -47,6 +56,20 @@ public class MainInHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 			throws Exception {
-		cause.printStackTrace();
+		logger.error(ctx.name(), cause);
+	}
+
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		logger.warn("Channel inactive, schedule to connect...");
+
+		ctx.channel().eventLoop().submit(() -> {
+			try {
+				Thread.sleep(5000L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			beanFactory.getBean(Client.class).connect();
+		});
 	}
 }
