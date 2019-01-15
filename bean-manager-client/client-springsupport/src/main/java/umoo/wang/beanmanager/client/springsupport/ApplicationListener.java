@@ -11,7 +11,7 @@ import umoo.wang.beanmanager.common.PropertyResolver;
  */
 public class ApplicationListener implements
 		org.springframework.context.ApplicationListener<ContextRefreshedEvent> {
-	private static final Logger logger = LoggerFactory
+	private final static Logger logger = LoggerFactory
 			.getLogger(ApplicationListener.class);
 	private boolean inited = false;
 

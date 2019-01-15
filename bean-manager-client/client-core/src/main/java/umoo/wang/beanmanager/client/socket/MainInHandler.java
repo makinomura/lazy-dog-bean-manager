@@ -20,7 +20,7 @@ import static umoo.wang.beanmanager.client.socket.Client.beanFactory;
 @ChannelHandler.Sharable
 public class MainInHandler extends SimpleChannelInboundHandler {
 
-	private static final Logger logger = LoggerFactory
+	private final static Logger logger = LoggerFactory
 			.getLogger(MainInHandler.class);
 
 	@Override

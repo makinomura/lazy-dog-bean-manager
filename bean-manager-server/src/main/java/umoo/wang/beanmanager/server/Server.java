@@ -23,7 +23,7 @@ import umoo.wang.beanmanager.message.reply.ReplyRegister;
  * Created by yuanchen on 2019/01/11.
  */
 public class Server {
-	public static BeanFactory beanFactory = new SingletonBeanFactory();
+	public final static BeanFactory beanFactory = new SingletonBeanFactory();
 
 	static {
 		buildBeans();
@@ -38,12 +38,12 @@ public class Server {
 		beanFactory.newBean(ReplyInvoker.class, register);
 	}
 
-	private static final EventLoopGroup bossGroup = new NioEventLoopGroup(
+	private final static EventLoopGroup bossGroup = new NioEventLoopGroup(
 			Runtime.getRuntime().availableProcessors() * 2);
-	private static final EventLoopGroup workerGroup = new NioEventLoopGroup(
+	private final static EventLoopGroup workerGroup = new NioEventLoopGroup(
 			100);
 
-	private static final Logger logger = LoggerFactory.getLogger(Server.class);
+	private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
 	public static void main(String[] args) {
 		String host = PropertyResolver.read("lazydog.server.host");

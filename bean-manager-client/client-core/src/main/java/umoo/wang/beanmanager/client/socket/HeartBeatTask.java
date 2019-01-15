@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
  * Created by yuanchen on 2019/01/14.
  */
 public class HeartBeatTask {
-	private static final Logger logger = LoggerFactory
+	private final static Logger logger = LoggerFactory
 			.getLogger(HeartBeatTask.class);
 
 	private static ExecutorService es;

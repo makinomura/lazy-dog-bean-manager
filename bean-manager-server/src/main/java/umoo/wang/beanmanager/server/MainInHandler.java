@@ -21,7 +21,7 @@ import java.net.InetSocketAddress;
  */
 @ChannelHandler.Sharable
 public class MainInHandler extends SimpleChannelInboundHandler {
-	private static final Logger logger = LoggerFactory.getLogger(Server.class);
+	private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
 	static ChannelGroup channels = new DefaultChannelGroup("clients",
 			GlobalEventExecutor.INSTANCE);

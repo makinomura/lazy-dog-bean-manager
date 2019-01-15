@@ -23,8 +23,8 @@ import umoo.wang.beanmanager.message.reply.ReplyRegister;
  * Created by yuanchen on 2019/01/11.
  */
 public class Client {
-	private static final Logger logger = LoggerFactory.getLogger(Client.class);
-	public static BeanFactory beanFactory = new SingletonBeanFactory();
+	public final static BeanFactory beanFactory = new SingletonBeanFactory();
+	private final static Logger logger = LoggerFactory.getLogger(Client.class);
 
 	static {
 		buildBeans();
