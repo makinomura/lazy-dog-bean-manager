@@ -31,18 +31,18 @@ public class Server {
 	}
 
 	private static void buildBeans() {
-		beanFactory.registerBean(CommandDecoder.class);
-		beanFactory.registerBean(CommandEncoder.class);
+		beanFactory.createBean(CommandDecoder.class);
+		beanFactory.createBean(CommandEncoder.class);
 
 		CommandProcessor commandProcessor = beanFactory
-				.registerBean(ServerCommandProcessor.class);
+				.createBean(ServerCommandProcessor.class);
 
-		beanFactory.registerBean(MainInHandler.class, commandProcessor);
+		beanFactory.createBean(MainInHandler.class, commandProcessor);
 
-		ReplyRegister register = beanFactory.registerBean(ReplyRegister.class,
+		ReplyRegister register = beanFactory.createBean(ReplyRegister.class,
 				5,
 				5000L);
-		beanFactory.registerBean(ReplyInvoker.class, register);
+		beanFactory.createBean(ReplyInvoker.class, register);
 
 	}
 

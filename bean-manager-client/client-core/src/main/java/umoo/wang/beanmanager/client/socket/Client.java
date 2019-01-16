@@ -42,20 +42,20 @@ public class Client {
 	}
 
 	private static void buildBeans() {
-		beanFactory.registerBean(CommandDecoder.class);
-		beanFactory.registerBean(CommandEncoder.class);
+		beanFactory.createBean(CommandDecoder.class);
+		beanFactory.createBean(CommandEncoder.class);
 		CommandProcessor commandProcessor = beanFactory
-				.registerBean(ClientCommandProcessor.class);
+				.createBean(ClientCommandProcessor.class);
 
-		beanFactory.registerBean(MainInHandler.class, commandProcessor);
-		ReplyRegister register = beanFactory.registerBean(ReplyRegister.class,
+		beanFactory.createBean(MainInHandler.class, commandProcessor);
+		ReplyRegister register = beanFactory.createBean(ReplyRegister.class,
 				5,
 				50000L);
-		beanFactory.registerBean(ReplyInvoker.class, register);
+		beanFactory.createBean(ReplyInvoker.class, register);
 	}
 
 	public static void start(String host, Integer port) {
-		beanFactory.registerBean(Client.class, host, port).connect();
+		beanFactory.createBean(Client.class, host, port).connect();
 	}
 
 	public void connect() {
@@ -86,7 +86,7 @@ public class Client {
 				if (future.isSuccess()) {
 					logger.info("Server connect successful!");
 
-					heartBeatTask = beanFactory.registerBean(
+					heartBeatTask = beanFactory.createBean(
 							HeartBeatTask.class,
 							channelFuture.channel(), 5000L);
 					;

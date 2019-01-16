@@ -46,7 +46,7 @@ public class SingletonBeanFactory implements BeanFactory {
 	}
 
 	@Override
-	public <T> T registerBean(Class<T> clazz, Object... args) {
+	public <T> T createBean(Class<T> clazz, Object... args) {
 		Object obj = null;
 
 		Constructor constructor = findConstructor(clazz, args);
