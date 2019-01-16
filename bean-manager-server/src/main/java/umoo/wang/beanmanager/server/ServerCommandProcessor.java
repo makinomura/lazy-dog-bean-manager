@@ -45,9 +45,10 @@ public class ServerCommandProcessor implements CommandProcessor {
 					+ " ,duration :" + (System.currentTimeMillis() - timestamp)
 					+ "ms");
 
-			result = new Command<>(command.getCommandId(),
-					CommandTargetEnum.CLIENT.value(),
-					ClientCommandTypeEnum.ACK.value(), 200);
+			result = Command.builder().replyTo(command.getCommandId())
+					.commandTarget(CommandTargetEnum.CLIENT.value())
+					.commandType(ClientCommandTypeEnum.ACK.value())
+					.commandObj(200).build();
 			break;
 		default:
 			return false;

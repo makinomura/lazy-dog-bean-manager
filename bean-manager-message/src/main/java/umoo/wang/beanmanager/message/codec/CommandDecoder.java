@@ -14,6 +14,7 @@ import java.util.List;
  */
 @ChannelHandler.Sharable
 public class CommandDecoder extends MessageToMessageDecoder<ByteBuf> {
+
 	private CommandSerializer serializer = CommandSerializer.load();
 
 	@Override
