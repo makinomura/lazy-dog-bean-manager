@@ -11,6 +11,8 @@ import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
 import umoo.wang.beanmanager.message.server.message.ServerHeartBeatMessage;
 
+import java.util.UUID;
+
 /**
  * Created by yuanchen on 2019/01/16.
  */
@@ -45,7 +47,9 @@ public class ServerCommandProcessor implements CommandProcessor {
 					+ " ,duration :" + (System.currentTimeMillis() - timestamp)
 					+ "ms");
 
-			result = Command.builder().replyTo(command.getCommandId())
+			result = Command.builder().commandId(UUID.randomUUID().toString())
+					.timestamps(System.currentTimeMillis())
+					.replyTo(command.getCommandId())
 					.commandTarget(CommandTargetEnum.CLIENT.value())
 					.commandType(ClientCommandTypeEnum.ACK.value())
 					.commandObj(200).build();
