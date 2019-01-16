@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
 import umoo.wang.beanmanager.common.exception.ClientException;
+import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
@@ -41,16 +42,20 @@ public class Client {
 	}
 
 	private static void buildBeans() {
-		beanFactory.newBean(CommandDecoder.class);
-		beanFactory.newBean(CommandEncoder.class);
-		beanFactory.newBean(MainInHandler.class);
-		ReplyRegister register = beanFactory.newBean(ReplyRegister.class, 5,
+		beanFactory.registerBean(CommandDecoder.class);
+		beanFactory.registerBean(CommandEncoder.class);
+		CommandProcessor commandProcessor = beanFactory
+				.registerBean(ClientCommandProcessor.class);
+
+		beanFactory.registerBean(MainInHandler.class, commandProcessor);
+		ReplyRegister register = beanFactory.registerBean(ReplyRegister.class,
+				5,
 				50000L);
-		beanFactory.newBean(ReplyInvoker.class, register);
+		beanFactory.registerBean(ReplyInvoker.class, register);
 	}
 
 	public static void start(String host, Integer port) {
-		beanFactory.newBean(Client.class, host, port).connect();
+		beanFactory.registerBean(Client.class, host, port).connect();
 	}
 
 	public void connect() {
@@ -81,7 +86,8 @@ public class Client {
 				if (future.isSuccess()) {
 					logger.info("Server connect successful!");
 
-					heartBeatTask = beanFactory.newBean(HeartBeatTask.class,
+					heartBeatTask = beanFactory.registerBean(
+							HeartBeatTask.class,
 							channelFuture.channel(), 5000L);
 					;
 					heartBeatTask.start();

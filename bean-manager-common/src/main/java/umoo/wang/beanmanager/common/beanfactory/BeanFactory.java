@@ -6,5 +6,5 @@ package umoo.wang.beanmanager.common.beanfactory;
 public interface BeanFactory {
 	<T> T getBean(Class<T> clazz);
 
-	<T> T newBean(Class<T> clazz, Object... args);
+	<T> T registerBean(Class<T> clazz, Object... args);
 }

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.PropertyResolver;
 import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
+import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
@@ -30,12 +31,19 @@ public class Server {
 	}
 
 	private static void buildBeans() {
-		beanFactory.newBean(CommandDecoder.class);
-		beanFactory.newBean(CommandEncoder.class);
-		beanFactory.newBean(MainInHandler.class);
-		ReplyRegister register = beanFactory.newBean(ReplyRegister.class, 5,
+		beanFactory.registerBean(CommandDecoder.class);
+		beanFactory.registerBean(CommandEncoder.class);
+
+		CommandProcessor commandProcessor = beanFactory
+				.registerBean(ServerCommandProcessor.class);
+
+		beanFactory.registerBean(MainInHandler.class, commandProcessor);
+
+		ReplyRegister register = beanFactory.registerBean(ReplyRegister.class,
+				5,
 				5000L);
-		beanFactory.newBean(ReplyInvoker.class, register);
+		beanFactory.registerBean(ReplyInvoker.class, register);
+
 	}
 
 	private final static EventLoopGroup bossGroup = new NioEventLoopGroup(

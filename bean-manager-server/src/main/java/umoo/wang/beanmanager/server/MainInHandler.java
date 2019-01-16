@@ -9,10 +9,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.message.Command;
-import umoo.wang.beanmanager.message.CommandTargetEnum;
-import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
-import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
-import umoo.wang.beanmanager.message.server.message.ServerHeartBeatMessage;
+import umoo.wang.beanmanager.message.CommandProcessor;
 
 import java.net.InetSocketAddress;
 
@@ -26,6 +23,12 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 	static ChannelGroup channels = new DefaultChannelGroup("clients",
 			GlobalEventExecutor.INSTANCE);
 
+	private CommandProcessor commandProcessor;
+
+	public MainInHandler(CommandProcessor commandProcessor) {
+		this.commandProcessor = commandProcessor;
+	}
+
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		ContextHolder.contexts.put(buildContextKey(ctx), ctx);
@@ -37,23 +40,7 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 			throws Exception {
 		Command command = (Command) msg;
 
-		if (command.getCommandTarget() == CommandTargetEnum.SERVER.value()
-				&& command.getCommandType() == ServerCommandTypeEnum.HEART_BEAT
-						.value()) {
-			long timestamp = ((ServerHeartBeatMessage) ((Command) msg)
-					.getCommandObj()).getTimestamp();
-
-			logger.info("Receive heart-beat package from "
-					+ buildContextKey(ctx) + " ,duration :"
-					+ (System.currentTimeMillis() - timestamp) + "ms");
-
-			ctx.writeAndFlush(new Command<>(command.getCommandId(),
-					CommandTargetEnum.CLIENT.value(),
-					ClientCommandTypeEnum.ACK.value(), 200));
-		} else {
-			logger.info(command.toString());
-		}
-
+		commandProcessor.process(ctx, command);
 	}
 
 	@Override

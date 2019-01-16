@@ -5,7 +5,9 @@ import umoo.wang.beanmanager.common.exception.ManagerException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by yuanchen on 2019/01/15.
@@ -25,15 +27,26 @@ public class SingletonBeanFactory implements BeanFactory {
 		wrapperMap.put(Double.TYPE.getName(), Double.class);
 		wrapperMap.put(Void.TYPE.getName(), Void.class);
 	}
-	private Map<String, Object> beans = new HashMap<>();
+	private Map<Class<?>, Object> beans = new HashMap<>();
 
 	@Override
 	public <T> T getBean(Class<T> clazz) {
-		return (T) beans.get(clazz.getName());
+		T bean = (T) beans.get(clazz);
+		if (bean == null) {
+			List<Object> beanList = beans.entrySet().stream()
+					.filter(entry -> clazz.isAssignableFrom(entry.getKey()))
+					.map(Map.Entry::getValue).collect(Collectors.toList());
+
+			if (!beanList.isEmpty()) {
+				bean = (T) beanList.get(0);
+			}
+		}
+
+		return bean;
 	}
 
 	@Override
-	public <T> T newBean(Class<T> clazz, Object... args) {
+	public <T> T registerBean(Class<T> clazz, Object... args) {
 		Object obj = null;
 
 		Constructor constructor = findConstructor(clazz, args);
@@ -49,7 +62,7 @@ public class SingletonBeanFactory implements BeanFactory {
 			throw new ManagerException("No such constructors found!");
 		}
 
-		beans.put(clazz.getName(), obj);
+		beans.put(clazz, obj);
 
 		return (T) obj;
 	}
