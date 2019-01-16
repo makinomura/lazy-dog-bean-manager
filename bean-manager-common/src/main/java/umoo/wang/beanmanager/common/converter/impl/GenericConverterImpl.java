@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 /**
- * Created by yuanchen on 2019/01/02.
+ * Created by yuanchen on 2019/01/02. 通用转换器
  */
 public class GenericConverterImpl implements Converter {
 
@@ -21,6 +21,8 @@ public class GenericConverterImpl implements Converter {
 			return (T) value;
 		} else {
 			try {
+
+				// Number类型
 				Method valueOf = requireType.getDeclaredMethod("valueOf",
 						String.class);
 

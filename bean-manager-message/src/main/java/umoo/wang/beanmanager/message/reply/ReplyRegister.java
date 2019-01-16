@@ -15,7 +15,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by yuanchen on 2019/01/15.
+ * Created by yuanchen on 2019/01/15. Replyable消息注册
  */
 @ChannelHandler.Sharable
 @SuppressWarnings("unchecked")
@@ -23,7 +23,7 @@ public class ReplyRegister extends ChannelOutboundHandlerAdapter {
 
 	private final static int CLEAN_TASK_INTERVALS = 5000;
 
-	private Long replyExpireTime;
+	private Long replyExpireTime;// 消息过期时间
 	private ScheduledExecutorService executor;
 	private Map<String, ReplyableCommand<Boolean, Object>> commandMap;
 
@@ -31,6 +31,7 @@ public class ReplyRegister extends ChannelOutboundHandlerAdapter {
 		this.replyExpireTime = replyExpireTime;
 		commandMap = new ConcurrentHashMap<>();
 
+		// 定时清理超时未得到响应的消息
 		executor = Executors.newScheduledThreadPool(maxThreads);
 		startCleanExpireReplyTask();
 	}
@@ -49,6 +50,11 @@ public class ReplyRegister extends ChannelOutboundHandlerAdapter {
 		ctx.writeAndFlush(msg, promise);
 	}
 
+	/**
+	 * 调用回调
+	 * 
+	 * @param command
+	 */
 	public void invokeCallback(Command command) {
 		commandMap.computeIfPresent(command.getReplyTo(), (k, v) -> {
 			executor.submit(() -> {
@@ -58,6 +64,9 @@ public class ReplyRegister extends ChannelOutboundHandlerAdapter {
 		});
 	}
 
+	/**
+	 * 移除过期消息
+	 */
 	private void startCleanExpireReplyTask() {
 		executor.scheduleWithFixedDelay(() -> {
 			long now = System.currentTimeMillis();

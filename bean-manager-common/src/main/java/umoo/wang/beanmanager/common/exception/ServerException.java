@@ -1,7 +1,7 @@
 package umoo.wang.beanmanager.common.exception;
 
 /**
- * Created by yuanchen on 2019/01/14.
+ * Created by yuanchen on 2019/01/14. Server异常
  */
 public class ServerException extends ManagerException {
 	public ServerException() {

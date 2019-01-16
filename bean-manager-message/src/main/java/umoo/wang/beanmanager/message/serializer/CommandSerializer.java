@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
- * Created by yuanchen on 2019/01/14.
+ * Created by yuanchen on 2019/01/14. Command消息序列化
  */
 public interface CommandSerializer {
 
@@ -21,7 +21,19 @@ public interface CommandSerializer {
 		return DefaultCommandSerializer.instance;
 	}
 
+	/**
+	 * 序列化
+	 * 
+	 * @param command
+	 * @return
+	 */
 	byte[] serialize(Command command);
 
+	/**
+	 * 反序列化
+	 * 
+	 * @param bytes
+	 * @return
+	 */
 	Command deserialize(byte[] bytes);
 }

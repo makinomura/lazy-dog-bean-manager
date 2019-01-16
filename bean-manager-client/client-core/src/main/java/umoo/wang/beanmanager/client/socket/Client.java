@@ -21,9 +21,11 @@ import umoo.wang.beanmanager.message.reply.ReplyInvoker;
 import umoo.wang.beanmanager.message.reply.ReplyRegister;
 
 /**
- * Created by yuanchen on 2019/01/11.
+ * Created by yuanchen on 2019/01/11. Client通讯类
  */
 public class Client {
+
+	// client的对象工厂
 	public final static BeanFactory beanFactory = new SingletonBeanFactory();
 	private final static Logger logger = LoggerFactory.getLogger(Client.class);
 
@@ -41,16 +43,26 @@ public class Client {
 		this.port = port;
 	}
 
+	/**
+	 * 构建beans
+	 */
 	private static void buildBeans() {
+		// Command解码
 		beanFactory.createBean(CommandDecoder.class);
+		// Command编码
 		beanFactory.createBean(CommandEncoder.class);
+		// Command消息处理器
 		CommandProcessor commandProcessor = beanFactory
 				.createBean(ClientCommandProcessor.class);
 
+		// 消息入口
 		beanFactory.createBean(MainInHandler.class, commandProcessor);
+
+		// Replyable消息注册
 		ReplyRegister register = beanFactory.createBean(ReplyRegister.class,
 				5,
 				50000L);
+		// Replyable消息回调
 		beanFactory.createBean(ReplyInvoker.class, register);
 	}
 
@@ -86,6 +98,7 @@ public class Client {
 				if (future.isSuccess()) {
 					logger.info("Server connect successful!");
 
+					// 连接Server成功开始心跳任务
 					heartBeatTask = beanFactory.createBean(
 							HeartBeatTask.class,
 							channelFuture.channel(), 5000L);
@@ -95,7 +108,10 @@ public class Client {
 					logger.warn(
 							"Server connect failed, schedule to connect again...");
 
+					// TODO 确定schedule方法不执行的原因，暂用Thread.sleep
 					future.channel().eventLoop().submit(() -> {
+
+						// 5秒后重新连接
 						try {
 							Thread.sleep(5000L);
 						} catch (InterruptedException e) {
@@ -108,6 +124,8 @@ public class Client {
 
 			channelFuture.sync();
 		} catch (Exception e) {
+
+			// 出错关闭心跳任务和workerGroup
 			if (heartBeatTask != null) {
 				heartBeatTask.shutdown();
 			}

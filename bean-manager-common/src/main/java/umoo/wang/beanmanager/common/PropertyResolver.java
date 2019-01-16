@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Created by yuanchen on 2019/01/14.
+ * Created by yuanchen on 2019/01/14. 读取配置文件
  */
 public class PropertyResolver {
 	private final static String CONFIG_FILE_NAME = "config.properties";
@@ -20,6 +20,9 @@ public class PropertyResolver {
 		loadProperties();
 	}
 
+	/**
+	 * 加载配置文件
+	 */
 	private static void loadProperties() {
 		try {
 			InputStream configStream = Thread.currentThread()
@@ -31,6 +34,12 @@ public class PropertyResolver {
 		}
 	}
 
+	/**
+	 * 读取配置key
+	 * 
+	 * @param key
+	 * @return
+	 */
 	public static String read(String key) {
 		String value = properties.getProperty(key);
 
@@ -40,6 +49,14 @@ public class PropertyResolver {
 		return value;
 	}
 
+	/**
+	 * 读取配置key并转换成指定类型
+	 * 
+	 * @param key
+	 * @param requireType
+	 * @param <T>
+	 * @return
+	 */
 	public static <T> T read(String key, Class<T> requireType) {
 		return ConverterFactory.withType(requireType).convert(read(key),
 				requireType);

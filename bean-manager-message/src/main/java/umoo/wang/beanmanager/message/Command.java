@@ -13,11 +13,17 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 public class Command<T> {
+	// 消息ID
 	private String commandId;
+	// 回复消息ID
 	private String replyTo;
+	// 消息生成时间
 	private long timestamps;
+	// 命令发送对象
 	private int commandTarget;
+	// 命令类型
 	private int commandType;
+	// 消息实体
 	private T commandObj;
 
 	public Command(int commandTarget, int commandType, T commandObj) {

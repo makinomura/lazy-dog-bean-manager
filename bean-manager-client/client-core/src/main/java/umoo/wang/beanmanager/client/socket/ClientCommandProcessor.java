@@ -10,7 +10,7 @@ import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
 import umoo.wang.beanmanager.message.client.message.ClientFieldUpdateMessage;
 
 /**
- * Created by yuanchen on 2019/01/16.
+ * Created by yuanchen on 2019/01/16. Client消息处理器，考虑到后期命令会增多，需要改成链式调用
  */
 public class ClientCommandProcessor implements CommandProcessor {
 	@Override

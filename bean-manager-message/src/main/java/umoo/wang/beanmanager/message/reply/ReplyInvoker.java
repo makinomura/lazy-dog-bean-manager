@@ -7,7 +7,7 @@ import umoo.wang.beanmanager.common.util.StringUtil;
 import umoo.wang.beanmanager.message.Command;
 
 /**
- * Created by yuanchen on 2019/01/15.
+ * Created by yuanchen on 2019/01/15. 如果消息是回复上一条消息，则调用callback
  */
 @ChannelHandler.Sharable
 public class ReplyInvoker extends SimpleChannelInboundHandler {

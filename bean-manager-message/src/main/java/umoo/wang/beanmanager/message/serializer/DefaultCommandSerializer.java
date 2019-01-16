@@ -14,7 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Created by yuanchen on 2019/01/14.
+ * Created by yuanchen on 2019/01/14. CommandSerializer的默认实现，使用FastJSON序列化
  */
 public class DefaultCommandSerializer implements CommandSerializer {
 
@@ -42,6 +42,7 @@ public class DefaultCommandSerializer implements CommandSerializer {
 
 		String commandObjectClazz = "";
 
+		// 根据消息类型获取实体类型
 		if (commandTargetEnum != null) {
 			switch (commandTargetEnum) {
 				case CLIENT:
@@ -66,6 +67,7 @@ public class DefaultCommandSerializer implements CommandSerializer {
 			}
 		}
 
+		// 反序列化实体
 		if (!StringUtil.isNullOrEmpty(commandObjectClazz)) {
 			try {
 				Class<?> objClazz = Class.forName(commandObjectClazz);

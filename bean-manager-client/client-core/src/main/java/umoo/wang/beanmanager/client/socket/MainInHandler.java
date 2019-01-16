@@ -11,7 +11,7 @@ import umoo.wang.beanmanager.message.CommandProcessor;
 import static umoo.wang.beanmanager.client.socket.Client.beanFactory;
 
 /**
- * Created by yuanchen on 2019/01/11.
+ * Created by yuanchen on 2019/01/11. Client主handler
  */
 @ChannelHandler.Sharable
 public class MainInHandler extends SimpleChannelInboundHandler {
@@ -28,6 +28,7 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
+		// 转发消息到Command处理器
 		Command command = ((Command) msg);
 		commandProcessor.process(ctx, command);
 	}
@@ -42,6 +43,7 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		logger.warn("Channel inactive, schedule to connect...");
 
+		// 断线后重连
 		ctx.channel().eventLoop().submit(() -> {
 			try {
 				Thread.sleep(5000L);

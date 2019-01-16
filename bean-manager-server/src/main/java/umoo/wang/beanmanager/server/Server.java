@@ -21,7 +21,7 @@ import umoo.wang.beanmanager.message.reply.ReplyInvoker;
 import umoo.wang.beanmanager.message.reply.ReplyRegister;
 
 /**
- * Created by yuanchen on 2019/01/11.
+ * Created by yuanchen on 2019/01/11. Server负责与Client通讯
  */
 public class Server {
 	public final static BeanFactory beanFactory = new SingletonBeanFactory();
@@ -30,18 +30,26 @@ public class Server {
 		buildBeans();
 	}
 
+	/**
+	 * 构建Beans
+	 */
 	private static void buildBeans() {
+		// Command解码
 		beanFactory.createBean(CommandDecoder.class);
+		// Command编码
 		beanFactory.createBean(CommandEncoder.class);
-
+		// Command消息处理器
 		CommandProcessor commandProcessor = beanFactory
 				.createBean(ServerCommandProcessor.class);
 
+		// 消息入口
 		beanFactory.createBean(MainInHandler.class, commandProcessor);
 
+		// Replyable消息注册
 		ReplyRegister register = beanFactory.createBean(ReplyRegister.class,
 				5,
 				5000L);
+		// Replyable消息回调
 		beanFactory.createBean(ReplyInvoker.class, register);
 
 	}
@@ -84,6 +92,7 @@ public class Server {
 			logger.info("Server start...");
 			f.sync();
 		} catch (InterruptedException e) {
+			// 出错关闭bossGroup和workerGroup
 			bossGroup.shutdownGracefully();
 			workerGroup.shutdownGracefully();
 		}

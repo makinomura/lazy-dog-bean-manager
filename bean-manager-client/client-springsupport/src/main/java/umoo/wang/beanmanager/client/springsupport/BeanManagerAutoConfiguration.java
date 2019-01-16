@@ -8,7 +8,7 @@ import umoo.wang.beanmanager.client.BeanManager;
 import umoo.wang.beanmanager.client.FieldUpdateListener;
 
 /**
- * Created by yuanchen on 2019/01/11.
+ * Created by yuanchen on 2019/01/11. 自动注册spring的Bean到BeanManager
  */
 @Configuration
 public class BeanManagerAutoConfiguration {
@@ -18,10 +18,13 @@ public class BeanManagerAutoConfiguration {
 			@Override
 			public Object postProcessAfterInitialization(Object bean,
 					String beanName) throws BeansException {
+
+				// 注册FieldUpdateListener
 				if (bean instanceof FieldUpdateListener) {
 					BeanManager.registerListener(((FieldUpdateListener) bean));
 				}
 
+				// 添加Bean
 				BeanManager.manage(bean);
 				return bean;
 			}

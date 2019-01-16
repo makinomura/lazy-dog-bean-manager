@@ -7,7 +7,7 @@ import umoo.wang.beanmanager.client.socket.Client;
 import umoo.wang.beanmanager.common.PropertyResolver;
 
 /**
- * Created by yuanchen on 2019/01/14.
+ * Created by yuanchen on 2019/01/14. 监听ContextRefreshedEvent启动Client
  */
 public class ApplicationListener implements
 		org.springframework.context.ApplicationListener<ContextRefreshedEvent> {

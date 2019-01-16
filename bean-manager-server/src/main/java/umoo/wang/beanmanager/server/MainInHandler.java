@@ -14,7 +14,7 @@ import umoo.wang.beanmanager.message.CommandProcessor;
 import java.net.InetSocketAddress;
 
 /**
- * Created by yuanchen on 2019/01/11.
+ * Created by yuanchen on 2019/01/11. 主要handler 保存/移除client的channel实体
  */
 @ChannelHandler.Sharable
 public class MainInHandler extends SimpleChannelInboundHandler {
@@ -40,6 +40,7 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 			throws Exception {
 		Command command = (Command) msg;
 
+		// 转发消息到消息处理器
 		commandProcessor.process(ctx, command);
 	}
 
@@ -55,6 +56,12 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 		cause.printStackTrace();
 	}
 
+	/**
+	 * 构建key ip:port
+	 * 
+	 * @param ctx
+	 * @return
+	 */
 	private String buildContextKey(ChannelHandlerContext ctx) {
 		InetSocketAddress inetSocketAddress = (InetSocketAddress) ctx.channel()
 				.remoteAddress();

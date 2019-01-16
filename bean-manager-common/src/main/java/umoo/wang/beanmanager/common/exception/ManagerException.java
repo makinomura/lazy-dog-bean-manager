@@ -1,7 +1,7 @@
 package umoo.wang.beanmanager.common.exception;
 
 /**
- * Created by yuanchen on 2019/01/14.
+ * Created by yuanchen on 2019/01/14. 框架异常
  */
 public class ManagerException extends RuntimeException {
 

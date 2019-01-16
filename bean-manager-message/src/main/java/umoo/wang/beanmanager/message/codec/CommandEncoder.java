@@ -10,7 +10,7 @@ import umoo.wang.beanmanager.message.serializer.CommandSerializer;
 import java.util.List;
 
 /**
- * Created by yuanchen on 2019/01/11.
+ * Created by yuanchen on 2019/01/11. Command消息编码器
  */
 @ChannelHandler.Sharable
 public class CommandEncoder extends MessageToMessageEncoder<Command> {

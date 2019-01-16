@@ -8,6 +8,14 @@ import java.lang.reflect.Method;
  */
 public class EnumUtil {
 
+	/**
+	 * 根据value获取Enum对象
+	 * 
+	 * @param value
+	 * @param clazz
+	 * @param <T>
+	 * @return
+	 */
 	public static <T extends Enum<T>> T valueOf(int value, Class<T> clazz) {
 
 		try {
