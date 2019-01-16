@@ -10,9 +10,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,24 +21,18 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("unchecked")
 public class ReplyRegister extends ChannelOutboundHandlerAdapter {
 
-	private Integer maxThreads;
+	private final static int CLEAN_TASK_INTERVALS = 5000;
+
 	private Long replyExpireTime;
-	private ExecutorService executor;
+	private ScheduledExecutorService executor;
 	private Map<String, ReplyableCommand<Boolean, Object>> commandMap;
 
 	public ReplyRegister(Integer maxThreads, Long replyExpireTime) {
-		this.maxThreads = maxThreads;
 		this.replyExpireTime = replyExpireTime;
 		commandMap = new ConcurrentHashMap<>();
 
-		executor = new ThreadPoolExecutor(1, maxThreads, 60L, TimeUnit.SECONDS,
-				new SynchronousQueue<>());
+		executor = Executors.newScheduledThreadPool(maxThreads);
 		startCleanExpireReplyTask();
-	}
-
-	@Override
-	public void read(ChannelHandlerContext ctx) throws Exception {
-		super.read(ctx);
 	}
 
 	@Override
@@ -59,7 +52,6 @@ public class ReplyRegister extends ChannelOutboundHandlerAdapter {
 	public void invokeCallback(Command command) {
 		commandMap.computeIfPresent(command.getReplyTo(), (k, v) -> {
 			executor.submit(() -> {
-				int a = 0;
 				v.getCallback().accept(true, command.getCommandObj());
 			});
 			return null;
@@ -67,22 +59,18 @@ public class ReplyRegister extends ChannelOutboundHandlerAdapter {
 	}
 
 	private void startCleanExpireReplyTask() {
-		executor.submit(() -> {
-			for (;;) {
-				long now = System.currentTimeMillis();
-				Set<String> expireKeys = new HashSet<>();
+		executor.scheduleWithFixedDelay(() -> {
+			long now = System.currentTimeMillis();
+			Set<String> expireKeys = new HashSet<>();
 
-				commandMap.forEach((commandId, command) -> {
-					if (now - command.getCommand()
-							.getTimestamps() > replyExpireTime) {
-						expireKeys.add(commandId);
-					}
-				});
+			commandMap.forEach((commandId, command) -> {
+				if (now - command.getCommand()
+						.getTimestamps() > replyExpireTime) {
+					expireKeys.add(commandId);
+				}
+			});
 
-				expireKeys.forEach(commandMap::remove);
-
-				Thread.sleep(5000);
-			}
-		});
+			expireKeys.forEach(commandMap::remove);
+		}, 0, CLEAN_TASK_INTERVALS, TimeUnit.MILLISECONDS);
 	}
 }

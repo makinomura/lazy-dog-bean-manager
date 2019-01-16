@@ -36,7 +36,7 @@ public class ServerCommandProcessor implements CommandProcessor {
 		case ACK:
 			logger.info("Receive ACK package from " + ctx.name() + ", value: "
 					+ command.getCommandObj().toString());
-			return true;
+			break;
 		case HEART_BEAT:
 			long timestamp = ((ServerHeartBeatMessage) (command)
 					.getCommandObj()).getTimestamp();
@@ -53,7 +53,9 @@ public class ServerCommandProcessor implements CommandProcessor {
 			return false;
 		}
 
-		ctx.writeAndFlush(result);
+		if (result != null) {
+			ctx.writeAndFlush(result);
+		}
 		return true;
 
 	}

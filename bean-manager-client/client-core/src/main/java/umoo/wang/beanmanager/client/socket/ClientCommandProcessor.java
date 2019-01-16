@@ -27,7 +27,7 @@ public class ClientCommandProcessor implements CommandProcessor {
 		}
 		switch (clientCommandTypeEnum) {
 		case ACK:
-			return true;
+			break;
 		case UPDATE_FIELD:
 			ClientFieldUpdateMessage message = (ClientFieldUpdateMessage) command
 					.getCommandObj();
