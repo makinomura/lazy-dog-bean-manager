@@ -2,7 +2,6 @@ package umoo.wang.beanmanager.common;
 
 import umoo.wang.beanmanager.common.converter.ConverterFactory;
 import umoo.wang.beanmanager.common.exception.ManagerException;
-import umoo.wang.beanmanager.common.exception.ServerException;
 import umoo.wang.beanmanager.common.util.StringUtil;
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ public class PropertyResolver {
 					.getResourceAsStream(CONFIG_FILE_NAME);
 			properties.load(configStream);
 		} catch (IOException e) {
-			throw ServerException.wrap(e);
+			throw ManagerException.wrap(e);
 		}
 	}
 

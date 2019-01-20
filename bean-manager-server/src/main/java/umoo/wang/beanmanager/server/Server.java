@@ -19,6 +19,10 @@ import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
 import umoo.wang.beanmanager.message.reply.ReplyRegister;
+import umoo.wang.beanmanager.server.persistence.MapperManager;
+import umoo.wang.beanmanager.server.persistence.mapper.VersionMapper;
+
+import java.util.Arrays;
 
 /**
  * Created by yuanchen on 2019/01/11. Server负责与Client通讯
@@ -52,6 +56,13 @@ public class Server {
 		// Replyable消息回调
 		beanFactory.createBean(ReplyInvoker.class, register);
 
+		// MapperManager
+		MapperManager mapperManager = beanFactory.createBean(
+				MapperManager.class, Arrays.asList(VersionMapper.class));
+
+		// VersionCache
+		beanFactory.createBean(VersionMapper.VersionCache.class, mapperManager);
+
 	}
 
 	private final static EventLoopGroup bossGroup = new NioEventLoopGroup(
@@ -62,6 +73,7 @@ public class Server {
 	private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
 	public static void main(String[] args) {
+
 		String host = PropertyResolver.read("lazydog.server.host");
 		Integer port = PropertyResolver.read("lazydog.server.port",
 				Integer.class);
