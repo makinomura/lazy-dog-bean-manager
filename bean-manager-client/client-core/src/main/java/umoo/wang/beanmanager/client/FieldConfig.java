@@ -56,10 +56,10 @@ public class FieldConfig<F, B> {
 
 	public void apply(F value) {
 		field.setAccessible(true);
-        try {
-            field.set(beanConfig.getBean(), value);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
+		try {
+			field.set(beanConfig.getBean(), value);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
 }

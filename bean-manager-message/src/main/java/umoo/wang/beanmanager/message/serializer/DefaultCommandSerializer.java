@@ -45,25 +45,25 @@ public class DefaultCommandSerializer implements CommandSerializer {
 		// 根据消息类型获取实体类型
 		if (commandTargetEnum != null) {
 			switch (commandTargetEnum) {
-				case CLIENT:
-					ClientCommandTypeEnum clientCommandTypeEnum = EnumUtil
+			case CLIENT:
+				ClientCommandTypeEnum clientCommandTypeEnum = EnumUtil
 						.valueOf(commandType, ClientCommandTypeEnum.class);
 
-					if (clientCommandTypeEnum != null) {
+				if (clientCommandTypeEnum != null) {
 					commandObjectClazz = clientCommandTypeEnum.clazz();
-					}
+				}
 
-					break;
-				case SERVER:
-					ServerCommandTypeEnum serverCommandTypeEnum = EnumUtil
+				break;
+			case SERVER:
+				ServerCommandTypeEnum serverCommandTypeEnum = EnumUtil
 						.valueOf(commandType, ServerCommandTypeEnum.class);
 
-					if (serverCommandTypeEnum != null) {
+				if (serverCommandTypeEnum != null) {
 					commandObjectClazz = serverCommandTypeEnum.clazz();
-					}
-					break;
-				default:
-					break;
+				}
+				break;
+			default:
+				break;
 			}
 		}
 

@@ -14,22 +14,6 @@ public class JdbcConfig {
 	private String username;
 	private String password;
 
-	public String getDriver() {
-		return driver;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
 	public JdbcConfig(String driver, String url, String username,
 			String password) {
 		this.driver = driver;
@@ -49,6 +33,22 @@ public class JdbcConfig {
 		}
 
 		return cache;
+	}
+
+	public String getDriver() {
+		return driver;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 
 	@Override

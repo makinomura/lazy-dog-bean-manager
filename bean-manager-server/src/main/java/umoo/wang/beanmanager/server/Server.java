@@ -29,6 +29,11 @@ import java.util.Arrays;
  */
 public class Server {
 	public final static BeanFactory beanFactory = new SingletonBeanFactory();
+	private final static EventLoopGroup bossGroup = new NioEventLoopGroup(
+			Runtime.getRuntime().availableProcessors() * 2);
+	private final static EventLoopGroup workerGroup = new NioEventLoopGroup(
+			100);
+	private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
 	static {
 		buildBeans();
@@ -50,8 +55,7 @@ public class Server {
 		beanFactory.createBean(MainInHandler.class, commandProcessor);
 
 		// Replyable消息注册
-		ReplyRegister register = beanFactory.createBean(ReplyRegister.class,
-				5,
+		ReplyRegister register = beanFactory.createBean(ReplyRegister.class, 5,
 				5000L);
 		// Replyable消息回调
 		beanFactory.createBean(ReplyInvoker.class, register);
@@ -64,13 +68,6 @@ public class Server {
 		beanFactory.createBean(VersionMapper.VersionCache.class, mapperManager);
 
 	}
-
-	private final static EventLoopGroup bossGroup = new NioEventLoopGroup(
-			Runtime.getRuntime().availableProcessors() * 2);
-	private final static EventLoopGroup workerGroup = new NioEventLoopGroup(
-			100);
-
-	private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
 	public static void main(String[] args) {
 

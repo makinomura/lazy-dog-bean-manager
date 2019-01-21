@@ -59,8 +59,7 @@ public class Client {
 		beanFactory.createBean(MainInHandler.class, commandProcessor);
 
 		// Replyable消息注册
-		ReplyRegister register = beanFactory.createBean(ReplyRegister.class,
-				5,
+		ReplyRegister register = beanFactory.createBean(ReplyRegister.class, 5,
 				50000L);
 		// Replyable消息回调
 		beanFactory.createBean(ReplyInvoker.class, register);
@@ -99,8 +98,7 @@ public class Client {
 					logger.info("Server connect successful!");
 
 					// 连接Server成功开始心跳任务
-					heartBeatTask = beanFactory.createBean(
-							HeartBeatTask.class,
+					heartBeatTask = beanFactory.createBean(HeartBeatTask.class,
 							channelFuture.channel(), 5000L);
 					;
 					heartBeatTask.start();
