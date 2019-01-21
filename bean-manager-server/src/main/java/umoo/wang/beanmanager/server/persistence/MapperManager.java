@@ -11,6 +11,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.exception.ServerException;
+import umoo.wang.beanmanager.server.persistence.transaction.DelegateTransactionFactory;
 
 import java.util.List;
 
@@ -42,7 +43,8 @@ public class MapperManager {
 			SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
 
 			Environment environment = new Environment(DEFAULT_ENVIRONMENT,
-					new JdbcTransactionFactory(),
+					new DelegateTransactionFactory(
+							new JdbcTransactionFactory()),
 					new PooledDataSource(config.getDriver(), config.getUrl(),
 							config.getUsername(), config.getPassword()));
 
