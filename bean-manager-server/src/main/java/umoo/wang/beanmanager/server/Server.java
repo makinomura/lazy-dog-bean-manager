@@ -19,10 +19,12 @@ import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
 import umoo.wang.beanmanager.message.reply.ReplyRegister;
-import umoo.wang.beanmanager.server.persistence.MapperManager;
+import umoo.wang.beanmanager.server.persistence.SqlSessionManager;
+import umoo.wang.beanmanager.server.persistence.entity.Version;
 import umoo.wang.beanmanager.server.persistence.mapper.VersionMapper;
 
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Created by yuanchen on 2019/01/11. Server负责与Client通讯
@@ -60,16 +62,21 @@ public class Server {
 		// Replyable消息回调
 		beanFactory.createBean(ReplyInvoker.class, register);
 
-		// MapperManager
-		MapperManager mapperManager = beanFactory.createBean(
-				MapperManager.class, Arrays.asList(VersionMapper.class));
-
-		// VersionCache
-		beanFactory.createBean(VersionMapper.VersionCache.class, mapperManager);
+		// SqlSessionManager
+		beanFactory.createBean(SqlSessionManager.class,
+				Arrays.asList(VersionMapper.class));
 
 	}
 
 	public static void main(String[] args) {
+
+		VersionMapper mapper = SqlSessionManager.getMapper(VersionMapper.class);
+		Version version = Version.builder().versionName("2").appId(1)
+				.environmentId(1).num(2).publishTime(new Date()).build();
+
+		mapper.selectOne(1);
+
+		System.out.println(version);
 
 		String host = PropertyResolver.read("lazydog.server.host");
 		Integer port = PropertyResolver.read("lazydog.server.port",

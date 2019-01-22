@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.server.persistence.entity;
+package umoo.wang.beanmanager.server.persistence.support;
 
 /**
  * Created by yuanchen on 2019/01/21.
