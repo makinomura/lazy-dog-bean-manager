@@ -21,15 +21,15 @@ import java.util.stream.Stream;
 /**
  * Created by Mekki on 2018/3/21. 实体->SQL工具类
  */
-public class EntitySQLSupport<T> {
+public class EntitySqlSupport<T> {
 
 	private static Logger logger = LoggerFactory
-			.getLogger(EntitySQLSupport.class);
+			.getLogger(EntitySqlSupport.class);
 
 	/**
 	 * SQL类缓存
 	 */
-	private static Map<String, EntitySQLSupport<?>> sqlSupportCache = new HashMap<>();
+	private static Map<String, EntitySqlSupport<?>> sqlSupportCache = new HashMap<>();
 
 	private Class<T> entityClass;
 
@@ -43,7 +43,7 @@ public class EntitySQLSupport<T> {
 
 	private Map<String, String> columns;
 
-	private EntitySQLSupport(Class<T> clazz) {
+	private EntitySqlSupport(Class<T> clazz) {
 		entityClass = clazz;
 
 		if (entityClass.getDeclaredFields().length == 0) {
@@ -58,12 +58,12 @@ public class EntitySQLSupport<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E> EntitySQLSupport<E> of(Class<E> clazz) {
+	public static <E> EntitySqlSupport<E> of(Class<E> clazz) {
 		if (!sqlSupportCache.containsKey(clazz.getName())) {
-			sqlSupportCache.put(clazz.getName(), new EntitySQLSupport<>(clazz));
+			sqlSupportCache.put(clazz.getName(), new EntitySqlSupport<>(clazz));
 		}
 
-		return (EntitySQLSupport<E>) sqlSupportCache.get(clazz.getName());
+		return (EntitySqlSupport<E>) sqlSupportCache.get(clazz.getName());
 	}
 
 	/**

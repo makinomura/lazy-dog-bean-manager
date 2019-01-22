@@ -32,7 +32,7 @@ public class SqlProvider {
 
 	// TODO 主键回写
 	public static String save(Object entity, ProviderContext context) {
-		EntitySQLSupport sqlSupport = getSqlSupport(context);
+		EntitySqlSupport sqlSupport = getSqlSupport(context);
 
 		if (sqlSupport.isPkNull(entity)) {
 			return sqlSupport.buildInsertSql(entity, true);
@@ -45,9 +45,9 @@ public class SqlProvider {
 		return getSqlSupport(context).buildDeleteByPrimaryKeySql(pk);
 	}
 
-	private static EntitySQLSupport getSqlSupport(ProviderContext context) {
+	private static EntitySqlSupport getSqlSupport(ProviderContext context) {
 		Class<?> entityClazz = resolveEntityClazz(context.getMapperType());
-		return EntitySQLSupport.of(entityClazz);
+		return EntitySqlSupport.of(entityClazz);
 	}
 
 	private static Class<?> resolveEntityClazz(Class<?> mapperClazz) {
