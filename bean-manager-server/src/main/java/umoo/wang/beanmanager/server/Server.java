@@ -71,11 +71,10 @@ public class Server {
 	public static void main(String[] args) {
 
 		VersionMapper mapper = SqlSessionManager.getMapper(VersionMapper.class);
-		Version version = Version.builder().versionName("2").appId(1)
-				.environmentId(1).num(2).publishTime(new Date()).build();
 
-		mapper.selectOne(1);
-
+		Version version = Version.builder().appId(1).environmentId(1).num(1)
+				.publishTime(new Date()).versionName("3").build();
+		mapper.save(version);
 		System.out.println(version);
 
 		String host = PropertyResolver.read("lazydog.server.host");

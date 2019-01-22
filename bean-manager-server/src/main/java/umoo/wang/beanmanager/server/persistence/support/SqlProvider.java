@@ -30,7 +30,6 @@ public class SqlProvider {
 		return getSqlSupport(context).buildSelectSql(entity);
 	}
 
-	// TODO 主键回写
 	public static String save(Object entity, ProviderContext context) {
 		EntitySqlSupport sqlSupport = getSqlSupport(context);
 

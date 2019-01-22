@@ -10,6 +10,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.exception.ServerException;
+import umoo.wang.beanmanager.server.persistence.support.InsertKeyInterceptor;
 import umoo.wang.beanmanager.server.persistence.transaction.DelegateTransactionFactory;
 
 import java.util.List;
@@ -73,6 +74,8 @@ public class SqlSessionManager {
 			Configuration configuration = new Configuration(environment);
 			configuration.setLazyLoadingEnabled(true);
 			configuration.setMapUnderscoreToCamelCase(true);
+			configuration.addInterceptor(new InsertKeyInterceptor());
+			configuration.setUseGeneratedKeys(true);
 
 			mapperInterfaces.forEach(configuration::addMapper);
 
