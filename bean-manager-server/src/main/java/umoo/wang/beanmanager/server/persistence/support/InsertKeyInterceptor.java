@@ -12,7 +12,8 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
-import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
+import org.apache.ibatis.scripting.xmltags.XMLScriptBuilder;
+import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
 import java.util.Properties;
@@ -34,21 +35,23 @@ public class InsertKeyInterceptor implements Interceptor {
 		// 支持useGeneratedKeys 以便回写主键
 		if (statement.getSqlCommandType() == SqlCommandType.INSERT
 				&& statement.getSqlSource() instanceof ProviderSqlSource) {
+			Configuration configuration = statement.getConfiguration();
+
 			String sql = statement.getBoundSql(args[1]).getSql();
 
 			// 暂定主键回写id字段 后续可根据EntitySqlSupport
 			// ProviderSqlSource.providerContext.mapperType 获取pkName
 			// 需要使用多次反射可能影响性能 暂不处理
-			sql = String.format(
+			String script = String.format(
 					"<insert useGeneratedKeys=\"true\" keyProperty=\"id\">%s</insert>",
 					sql);
-			XPathParser parser = new XPathParser(sql, false,
-					statement.getConfiguration().getVariables(),
+			XPathParser parser = new XPathParser(script, false,
+					configuration.getVariables(),
 					new XMLMapperEntityResolver());
-			XMLLanguageDriver driver = new XMLLanguageDriver();
-			SqlSource sqlSource = driver.createSqlSource(
-					statement.getConfiguration(), parser.evalNode("/insert"),
-					null);
+
+			XMLScriptBuilder builder = new XMLScriptBuilder(configuration,
+					parser.evalNode("/insert"), null);
+			SqlSource sqlSource = builder.parseScriptNode();
 
 			Field sqlSourceField = MappedStatement.class
 					.getDeclaredField("sqlSource");
