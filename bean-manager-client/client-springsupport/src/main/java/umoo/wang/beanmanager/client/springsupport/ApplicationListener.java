@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.ContextRefreshedEvent;
 import umoo.wang.beanmanager.client.socket.Client;
-import umoo.wang.beanmanager.common.PropertyResolver;
 
 /**
  * Created by yuanchen on 2019/01/14. 监听ContextRefreshedEvent启动Client
@@ -23,11 +22,7 @@ public class ApplicationListener implements
 		}
 
 		try {
-			String host = PropertyResolver.read("lazydog.server.host");
-			Integer port = PropertyResolver.read("lazydog.server.port",
-					Integer.class);
-
-			Client.start(host, port);
+			Client.start();
 			inited = true;
 		} catch (Exception e) {
 			logger.error("Error starting client!", e);

@@ -1,6 +1,7 @@
 package umoo.wang.beanmanager.client.socket;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
@@ -19,6 +20,8 @@ import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
 import umoo.wang.beanmanager.message.reply.ReplyRegister;
+import umoo.wang.beanmanager.message.server.command.ServerRegisterCommand;
+import umoo.wang.beanmanager.message.server.message.ServerRegisterMessage;
 
 /**
  * Created by yuanchen on 2019/01/11. Client通讯类
@@ -35,12 +38,10 @@ public class Client {
 
 	private HeartBeatTask heartBeatTask;
 	private ChannelFuture channelFuture;
-	private String host;
-	private Integer port;
+	private ClientConfig config;
 
-	public Client(String host, Integer port) {
-		this.host = host;
-		this.port = port;
+	public Client() {
+		this.config = ClientConfig.read();
 	}
 
 	/**
@@ -65,8 +66,8 @@ public class Client {
 		beanFactory.createBean(ReplyInvoker.class, register);
 	}
 
-	public static void start(String host, Integer port) {
-		beanFactory.createBean(Client.class, host, port).connect();
+	public static void start() {
+		beanFactory.createBean(Client.class).connect();
 	}
 
 	public void connect() {
@@ -92,16 +93,19 @@ public class Client {
 				});
 
 		try {
-			channelFuture = bootstrap.connect(host, port);
+			channelFuture = bootstrap.connect(config.getHost(),
+					config.getPort());
 			channelFuture.addListener((ChannelFutureListener) future -> {
 				if (future.isSuccess()) {
 					logger.info("Server connect successful!");
 
 					// 连接Server成功开始心跳任务
 					heartBeatTask = beanFactory.createBean(HeartBeatTask.class,
-							channelFuture.channel(), 5000L);
-					;
+							channelFuture.channel(), 60000L);
+
 					heartBeatTask.start();
+
+					doRegister(future.channel());
 				} else {
 					logger.warn(
 							"Server connect failed, schedule to connect again...");
@@ -132,8 +136,14 @@ public class Client {
 		}
 	}
 
+	private void doRegister(Channel channel) {
+		channel.writeAndFlush(
+				new ServerRegisterCommand(new ServerRegisterMessage(
+						config.getAppName(), config.getEnvironmentName())));
+	}
+
 	@Override
 	public String toString() {
-		return "Client{" + "host='" + host + '\'' + ", port=" + port + '}';
+		return "Client{" + "config=" + config + '}';
 	}
 }

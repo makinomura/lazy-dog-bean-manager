@@ -7,11 +7,13 @@ import umoo.wang.beanmanager.common.util.EnumUtil;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.CommandTargetEnum;
-import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
-import umoo.wang.beanmanager.message.server.message.ServerHeartBeatMessage;
+import umoo.wang.beanmanager.server.processor.AckProcessor;
+import umoo.wang.beanmanager.server.processor.ServerHeartBeatCommandProcessor;
+import umoo.wang.beanmanager.server.processor.ServerRegisterCommandProcessor;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by yuanchen on 2019/01/16.
@@ -19,6 +21,14 @@ import java.util.UUID;
 public class ServerCommandProcessor implements CommandProcessor {
 	private final static Logger logger = LoggerFactory
 			.getLogger(ServerCommandProcessor.class);
+
+	private static List<CommandProcessor> processors = new ArrayList<>();
+
+	static {
+		processors.add(new AckProcessor());
+		processors.add(new ServerRegisterCommandProcessor());
+		processors.add(new ServerHeartBeatCommandProcessor());
+	}
 
 	@Override
 	public boolean process(ChannelHandlerContext ctx, Command<?> command) {
@@ -32,36 +42,20 @@ public class ServerCommandProcessor implements CommandProcessor {
 			return false;
 		}
 
-		Command<?> result = null;
+		boolean processed = false;
 
-		switch (serverCommandTypeEnum) {
-		case ACK:
-			logger.info("Receive ACK package from " + ctx.name() + ", value: "
-					+ command.getCommandObj().toString());
-			break;
-		case HEART_BEAT:
-			long timestamp = ((ServerHeartBeatMessage) (command)
-					.getCommandObj()).getTimestamp();
+		for (CommandProcessor processor : processors) {
+			processed = processor.process(ctx, command);
 
-			logger.info("Receive heart-beat package from " + ctx.name()
-					+ " ,duration :" + (System.currentTimeMillis() - timestamp)
-					+ "ms");
-
-			result = Command.builder().commandId(UUID.randomUUID().toString())
-					.timestamps(System.currentTimeMillis())
-					.replyTo(command.getCommandId())
-					.commandTarget(CommandTargetEnum.CLIENT.value())
-					.commandType(ClientCommandTypeEnum.ACK.value())
-					.commandObj(200).build();
-			break;
-		default:
-			return false;
+			if (processed) {
+				break;
+			}
 		}
 
-		if (result != null) {
-			ctx.writeAndFlush(result);
+		if (!processed) {
+			logger.warn("Unsupported command:" + command);
 		}
-		return true;
+		return processed;
 
 	}
 }

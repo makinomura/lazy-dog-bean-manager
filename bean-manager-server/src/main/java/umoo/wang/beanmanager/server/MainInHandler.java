@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 
-import java.net.InetSocketAddress;
-
 /**
  * Created by yuanchen on 2019/01/11. 主要handler 保存/移除client的channel实体
  */
@@ -31,7 +29,7 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		ContextHolder.contexts.put(buildContextKey(ctx), ctx);
+		ClientManager.register(ctx);
 		channels.add(ctx.channel());
 	}
 
@@ -46,7 +44,7 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		ContextHolder.contexts.remove(buildContextKey(ctx));
+		ClientManager.unregister(ctx);
 		channels.remove(ctx.channel());
 	}
 
@@ -56,17 +54,5 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 		cause.printStackTrace();
 	}
 
-	/**
-	 * 构建key ip:port
-	 * 
-	 * @param ctx
-	 * @return
-	 */
-	private String buildContextKey(ChannelHandlerContext ctx) {
-		InetSocketAddress inetSocketAddress = (InetSocketAddress) ctx.channel()
-				.remoteAddress();
 
-		return inetSocketAddress.getHostString() + ":"
-				+ inetSocketAddress.getPort();
-	}
 }
