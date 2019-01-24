@@ -26,8 +26,8 @@ public class ServerCommandProcessor implements CommandProcessor {
 
 	static {
 		processors.add(new AckProcessor());
-		processors.add(new ServerRegisterCommandProcessor());
 		processors.add(new ServerHeartBeatCommandProcessor());
+		processors.add(new ServerRegisterCommandProcessor());
 	}
 
 	@Override
@@ -56,6 +56,5 @@ public class ServerCommandProcessor implements CommandProcessor {
 			logger.warn("Unsupported command:" + command);
 		}
 		return processed;
-
 	}
 }

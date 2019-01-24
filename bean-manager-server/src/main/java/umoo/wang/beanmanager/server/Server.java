@@ -14,17 +14,19 @@ import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.PropertyResolver;
 import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
+import umoo.wang.beanmanager.common.exception.ServerException;
 import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
 import umoo.wang.beanmanager.message.reply.ReplyRegister;
+import umoo.wang.beanmanager.server.persistence.DelegateSqlSession;
 import umoo.wang.beanmanager.server.persistence.SqlSessionManager;
 import umoo.wang.beanmanager.server.persistence.entity.Version;
 import umoo.wang.beanmanager.server.persistence.mapper.VersionMapper;
 
-import java.util.Arrays;
 import java.util.Date;
+import java.util.function.Function;
 
 /**
  * Created by yuanchen on 2019/01/11. Server负责与Client通讯
@@ -61,20 +63,29 @@ public class Server {
 				5000L);
 		// Replyable消息回调
 		beanFactory.createBean(ReplyInvoker.class, register);
-
-		// SqlSessionManager
-		beanFactory.createBean(SqlSessionManager.class,
-				Arrays.asList(VersionMapper.class));
-
 	}
 
 	public static void main(String[] args) {
 
-		VersionMapper mapper = SqlSessionManager.getMapper(VersionMapper.class);
+		Version version = SqlSessionManager.execute(false,
+				(Function<DelegateSqlSession, Version>) sqlSession -> {
+					VersionMapper versionMapper = sqlSession
+							.getMapper(VersionMapper.class);
 
-		Version version = Version.builder().appId(1).environmentId(1).num(1)
-				.publishTime(new Date()).versionName("3").build();
-		mapper.save(version);
+					sqlSession.registerCallbackAfterCommit(() -> {
+						logger.info("commit");
+					});
+
+					Version obj = Version.builder().versionName("111").appId(1)
+							.environmentId(1).num(1).publishTime(new Date())
+							.build();
+					versionMapper.save(obj);
+
+					System.out.println(obj);
+
+					throw new ServerException();
+				});
+
 		System.out.println(version);
 
 		String host = PropertyResolver.read("lazydog.server.host");

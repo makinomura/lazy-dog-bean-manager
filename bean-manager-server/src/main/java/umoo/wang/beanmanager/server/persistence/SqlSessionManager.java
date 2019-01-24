@@ -11,9 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.exception.ServerException;
 import umoo.wang.beanmanager.server.persistence.support.InsertKeyInterceptor;
-import umoo.wang.beanmanager.server.persistence.transaction.DelegateTransactionFactory;
 
-import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by yuanchen on 2019/01/20.
@@ -22,41 +22,66 @@ public class SqlSessionManager {
 	private final static String DEFAULT_ENVIRONMENT = "default";
 	private final static Logger logger = LoggerFactory
 			.getLogger(SqlSessionManager.class);
-	private static ThreadLocal<SqlSession> currentSqlSession = new ThreadLocal<>();
-	private static SqlSessionFactory delegate;
-	private List<Class<?>> mapperInterfaces;
+	private static SqlSessionFactory sqlSessionFactory;
 
-	public SqlSessionManager(List<Class<?>> mapperInterfaces) {
-		this.mapperInterfaces = mapperInterfaces;
-		buildDelegate();
+	static {
+		buildSqlSessionFactory();
 	}
 
-	public static SqlSession getCurrentSqlSession() {
-		return currentSqlSession.get();
+	public static DelegateSqlSession openSession() {
+		return openSession(true, false);
 	}
 
-	public static <T> T getMapper(Class<T> clazz) {
-		if (currentSqlSession.get() == null) {
-			openSession(true);
+	public static DelegateSqlSession openSession(boolean autoCommit,
+			boolean readonly) {
+		SqlSession sqlSession = sqlSessionFactory.openSession(autoCommit);
+		return readonly ? new ReadonlySqlSession(sqlSession)
+				: new DelegateSqlSession(sqlSession);
+	}
+
+	public static void execute(Consumer<DelegateSqlSession> consumer) {
+		execute(false, consumer);
+	}
+
+	public static void execute(boolean readonly,
+			Consumer<DelegateSqlSession> consumer) {
+		execute(readonly, sqlSession -> {
+			consumer.accept(sqlSession);
+			return null;
+		});
+	}
+
+	public static <T> T execute(Function<DelegateSqlSession, T> function) {
+		return execute(false, function);
+	}
+
+	public static <T> T execute(boolean readonly,
+			Function<DelegateSqlSession, T> function) {
+		DelegateSqlSession sqlSession = null;
+		Exception e = null;
+
+		try {
+			sqlSession = openSession(false, readonly);
+			T result = function.apply(sqlSession);
+
+			sqlSession.commit();
+			return result;
+		} catch (Exception ex) {
+			e = ex;
+
+			if (sqlSession != null) {
+				sqlSession.rollback();
+			}
+		} finally {
+			if (sqlSession != null) {
+				sqlSession.close();
+			}
 		}
 
-		return currentSqlSession.get().getMapper(clazz);
+		throw ServerException.wrap(e);
 	}
 
-	public static SqlSession openSession() {
-		return openSession(true);
-	}
-
-	public static SqlSession openSession(boolean autoCommit) {
-		SqlSession sqlSession = delegate.openSession(autoCommit);
-		currentSqlSession.set(sqlSession);
-		return sqlSession;
-	}
-
-	private void buildDelegate() {
-		if (delegate != null) {
-			logger.warn("SqlSessionManager is already built.");
-		}
+	private static void buildSqlSessionFactory() {
 
 		JdbcConfig config = JdbcConfig.read();
 
@@ -66,8 +91,7 @@ public class SqlSessionManager {
 			SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
 
 			Environment environment = new Environment(DEFAULT_ENVIRONMENT,
-					new DelegateTransactionFactory(
-							new JdbcTransactionFactory()),
+					new JdbcTransactionFactory(),
 					new PooledDataSource(config.getDriver(), config.getUrl(),
 							config.getUsername(), config.getPassword()));
 
@@ -77,10 +101,7 @@ public class SqlSessionManager {
 			configuration.addInterceptor(new InsertKeyInterceptor());
 			configuration.setUseGeneratedKeys(true);
 
-			mapperInterfaces.forEach(configuration::addMapper);
-
-			delegate = sqlSessionFactoryBuilder.build(configuration);
-
+			sqlSessionFactory = sqlSessionFactoryBuilder.build(configuration);
 		} catch (ClassNotFoundException e) {
 			logger.error("Connection establish failed!", e);
 			throw ServerException.wrap(e);
