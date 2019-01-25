@@ -7,27 +7,17 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
-import org.objectweb.asm.ClassWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.server.persistence.support.DynamicMapperCreator;
 import umoo.wang.beanmanager.server.persistence.support.Mapper;
 import umoo.wang.beanmanager.server.persistence.support.PrimaryKey;
 
-import java.io.ByteArrayInputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
-import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
-import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.V1_8;
 
 /**
  * Created by yuanchen on 2019/01/24. 在获取Mapper时如果没有Mapper就动态添加
@@ -67,38 +57,6 @@ public class DelegateSqlSession implements SqlSession {
 			}
 
 			iterator.remove();
-		}
-	}
-
-	public static void main(String[] args) {
-		ClassWriter cw = new ClassWriter(COMPUTE_MAXS);
-
-		cw.visit(V1_8, ACC_PUBLIC + ACC_INTERFACE + ACC_ABSTRACT,
-				"umoo/wang/beanmanager/server/persistence/CustomerMapper",
-				"Ljava/lang/Object;Lumoo/wang/beanmanager/server/persistence/support/Mapper<Ljava/lang/Integer;Lumoo/wang/beanmanager/server/persistence/entity/Version;>;",
-				"java/lang/Object", new String[] {
-						"umoo/wang/beanmanager/server/persistence/support/Mapper" });
-		cw.visitEnd();
-
-		byte[] bytes = cw.toByteArray();
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-				bytes);
-
-		ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-		try {
-			Method defineClassMethod = ClassLoader.class.getDeclaredMethod(
-					"defineClass", String.class, byte[].class, int.class,
-					int.class);
-
-			defineClassMethod.setAccessible(true);
-			Class<?> clazz = (Class<?>) defineClassMethod.invoke(cl, null,
-					bytes, 0, bytes.length);
-
-			System.out.println(clazz);
-		} catch (NoSuchMethodException | InvocationTargetException
-				| IllegalAccessException e) {
-			e.printStackTrace();
 		}
 	}
 
