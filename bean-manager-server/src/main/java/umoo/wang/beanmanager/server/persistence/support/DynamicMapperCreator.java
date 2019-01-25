@@ -25,7 +25,7 @@ public class DynamicMapperCreator {
 			Object.class);
 	private final static String ANONYMOUS_MAPPER_SIGNATURE = "L"
 			+ OBJECT_CLASS_NAME + ";L" + MAPPER_INTERFACE_NAME + "<L%s;L%s;>;";
-	private final static String ANONYMOUS_MAPPER_CLASS = MAPPER_INTERFACE_NAME
+	private final static String ANONYMOUS_MAPPER_CLASS_NAME = MAPPER_INTERFACE_NAME
 			+ "$%s";
 	private static Method defineClazzMethod;
 
@@ -95,7 +95,7 @@ public class DynamicMapperCreator {
 		Class<?> pkClazz = (Class<?>) ((ParameterizedType) entityClazz
 				.getGenericInterfaces()[0]).getActualTypeArguments()[0];
 
-		String mapperClazzName = String.format(ANONYMOUS_MAPPER_CLASS,
+		String mapperClazzName = String.format(ANONYMOUS_MAPPER_CLASS_NAME,
 				entityName);
 
 		String signature = String.format(ANONYMOUS_MAPPER_SIGNATURE,
