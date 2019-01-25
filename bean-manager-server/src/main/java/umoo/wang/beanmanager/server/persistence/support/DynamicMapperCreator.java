@@ -25,11 +25,31 @@ public class DynamicMapperCreator {
 			Object.class);
 	private final static String ANONYMOUS_MAPPER_SIGNATURE = "Ljava/lang/Object;Lumoo/wang/beanmanager/server/persistence/support/Mapper<L%s;L%s;>;";
 	private final static String ANONYMOUS_MAPPER_CLASS = "%s$%s";
+	private static Method defineClazzMethod;
+
+	static {
+		try {
+			defineClazzMethod = ClassLoader.class.getDeclaredMethod(
+					"defineClass", String.class, byte[].class, int.class,
+					int.class);
+		} catch (NoSuchMethodException e) {
+			throw ServerException.wrap(e);
+		}
+
+		defineClazzMethod.setAccessible(true);
+	}
 
 	private Map<Class<?>, Class<?>> mappers = new HashMap<>();
 
 	private static String resolveClazzName(Class<?> clazz) {
 		return clazz.getName().replaceAll("\\.", "/");
+	}
+
+	private static Class<?> loadMapperClazz(byte[] bytes)
+			throws InvocationTargetException, IllegalAccessException {
+		return (Class<?>) defineClazzMethod.invoke(
+				ClassLoader.getSystemClassLoader(), null, bytes, 0,
+				bytes.length);
 	}
 
 	public Class<?> getOrCreateMapperClazz(Class<?> entityClazz) {
@@ -53,8 +73,7 @@ public class DynamicMapperCreator {
 
 			mappers.put(entityClazz, mapperClazz);
 			return mapperClazz;
-		} catch (NoSuchMethodException | InvocationTargetException
-				| IllegalAccessException e) {
+		} catch (InvocationTargetException | IllegalAccessException e) {
 			throw ServerException.wrap(e);
 		}
 	}
@@ -64,13 +83,11 @@ public class DynamicMapperCreator {
 	 * 
 	 * @param entityClazz
 	 * @return
-	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
 	private Class<?> buildAnonymousMapperClazz(Class<?> entityClazz)
-			throws NoSuchMethodException, InvocationTargetException,
-			IllegalAccessException {
+			throws InvocationTargetException, IllegalAccessException {
 		String entityName = entityClazz.getSimpleName();
 
 		Class<?> pkClazz = (Class<?>) ((ParameterizedType) entityClazz
@@ -89,17 +106,6 @@ public class DynamicMapperCreator {
 				new String[] { MAPPER_INTERFACE_NAME });
 		cw.visitEnd();
 
-		byte[] bytes = cw.toByteArray();
-
-		ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-		Method defineClassMethod = ClassLoader.class.getDeclaredMethod(
-				"defineClass", String.class, byte[].class, int.class,
-				int.class);
-
-		defineClassMethod.setAccessible(true);
-
-		return (Class<?>) defineClassMethod.invoke(cl, null, bytes, 0,
-				bytes.length);
+		return loadMapperClazz(cw.toByteArray());
 	}
 }
