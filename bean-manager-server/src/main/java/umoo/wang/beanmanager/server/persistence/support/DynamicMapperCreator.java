@@ -23,8 +23,10 @@ public class DynamicMapperCreator {
 			Mapper.class);
 	private final static String OBJECT_CLASS_NAME = resolveClazzName(
 			Object.class);
-	private final static String ANONYMOUS_MAPPER_SIGNATURE = "Ljava/lang/Object;Lumoo/wang/beanmanager/server/persistence/support/Mapper<L%s;L%s;>;";
-	private final static String ANONYMOUS_MAPPER_CLASS = "%s$%s";
+	private final static String ANONYMOUS_MAPPER_SIGNATURE = "L"
+			+ OBJECT_CLASS_NAME + ";L" + MAPPER_INTERFACE_NAME + "<L%s;L%s;>;";
+	private final static String ANONYMOUS_MAPPER_CLASS = MAPPER_INTERFACE_NAME
+			+ "$%s";
 	private static Method defineClazzMethod;
 
 	static {
@@ -94,7 +96,7 @@ public class DynamicMapperCreator {
 				.getGenericInterfaces()[0]).getActualTypeArguments()[0];
 
 		String mapperClazzName = String.format(ANONYMOUS_MAPPER_CLASS,
-				MAPPER_INTERFACE_NAME, entityName);
+				entityName);
 
 		String signature = String.format(ANONYMOUS_MAPPER_SIGNATURE,
 				resolveClazzName(pkClazz), resolveClazzName(entityClazz));
