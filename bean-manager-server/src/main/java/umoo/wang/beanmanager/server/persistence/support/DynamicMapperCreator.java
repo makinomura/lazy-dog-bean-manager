@@ -18,7 +18,7 @@ import static org.objectweb.asm.Opcodes.V1_8;
 /**
  * Created by yuanchen on 2019/01/25. 动态构建Mapper Class文件并加载
  */
-public class DynamicMapperFactory {
+public class DynamicMapperCreator {
 	private final static String MAPPER_INTERFACE_NAME = resolveClazzName(
 			Mapper.class);
 	private final static String OBJECT_CLASS_NAME = resolveClazzName(

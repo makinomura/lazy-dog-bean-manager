@@ -10,7 +10,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.objectweb.asm.ClassWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import umoo.wang.beanmanager.server.persistence.support.DynamicMapperFactory;
+import umoo.wang.beanmanager.server.persistence.support.DynamicMapperCreator;
 import umoo.wang.beanmanager.server.persistence.support.Mapper;
 import umoo.wang.beanmanager.server.persistence.support.PrimaryKey;
 
@@ -41,14 +41,14 @@ public class DelegateSqlSession implements SqlSession {
 
 	private SqlSession delegate;
 
-	private DynamicMapperFactory mapperFactory;
+	private DynamicMapperCreator mapperCreator;
 
 	private List<Runnable> afterCommitRunners = new ArrayList<>();
 
 	public DelegateSqlSession(SqlSession delegate,
-			DynamicMapperFactory mapperFactory) {
+			DynamicMapperCreator mapperCreator) {
 		this.delegate = delegate;
-		this.mapperFactory = mapperFactory;
+		this.mapperCreator = mapperCreator;
 	}
 
 	public void registerCallbackAfterCommit(Runnable runnable) {
@@ -106,7 +106,7 @@ public class DelegateSqlSession implements SqlSession {
 	public <PK, E extends PrimaryKey<PK>, M extends Mapper<PK, E>> M getMapperWithEntityClazz(
 			Class<E> clazz) {
 
-		Class<?> mapperClazz = mapperFactory.getOrCreateMapperClazz(clazz);
+		Class<?> mapperClazz = mapperCreator.getOrCreateMapperClazz(clazz);
 		return (M) getMapper(mapperClazz);
 	}
 

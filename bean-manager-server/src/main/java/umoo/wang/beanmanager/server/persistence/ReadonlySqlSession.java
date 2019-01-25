@@ -2,15 +2,15 @@ package umoo.wang.beanmanager.server.persistence;
 
 import org.apache.ibatis.session.SqlSession;
 import umoo.wang.beanmanager.common.exception.ServerException;
-import umoo.wang.beanmanager.server.persistence.support.DynamicMapperFactory;
+import umoo.wang.beanmanager.server.persistence.support.DynamicMapperCreator;
 
 /**
  * Created by yuanchen on 2019/01/24.
  */
 public class ReadonlySqlSession extends DelegateSqlSession {
 	public ReadonlySqlSession(SqlSession delegate,
-			DynamicMapperFactory mapperFactory) {
-		super(delegate, mapperFactory);
+			DynamicMapperCreator mapperCreator) {
+		super(delegate, mapperCreator);
 	}
 
 	@Override

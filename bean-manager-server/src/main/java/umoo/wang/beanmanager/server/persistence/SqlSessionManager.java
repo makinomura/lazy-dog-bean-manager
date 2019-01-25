@@ -10,7 +10,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.exception.ServerException;
-import umoo.wang.beanmanager.server.persistence.support.DynamicMapperFactory;
+import umoo.wang.beanmanager.server.persistence.support.DynamicMapperCreator;
 import umoo.wang.beanmanager.server.persistence.support.InsertKeyInterceptor;
 
 import java.util.function.Consumer;
@@ -24,7 +24,7 @@ public class SqlSessionManager {
 	private final static Logger logger = LoggerFactory
 			.getLogger(SqlSessionManager.class);
 	private static SqlSessionFactory sqlSessionFactory;
-	private static DynamicMapperFactory mapperFactory = new DynamicMapperFactory();
+	private static DynamicMapperCreator mapperCreator = new DynamicMapperCreator();
 
 	static {
 		buildSqlSessionFactory();
@@ -37,8 +37,8 @@ public class SqlSessionManager {
 	public static DelegateSqlSession openSession(boolean autoCommit,
 			boolean readonly) {
 		SqlSession sqlSession = sqlSessionFactory.openSession(autoCommit);
-		return readonly ? new ReadonlySqlSession(sqlSession, mapperFactory)
-				: new DelegateSqlSession(sqlSession, mapperFactory);
+		return readonly ? new ReadonlySqlSession(sqlSession, mapperCreator)
+				: new DelegateSqlSession(sqlSession, mapperCreator);
 	}
 
 	public static void execute(Consumer<DelegateSqlSession> consumer) {
