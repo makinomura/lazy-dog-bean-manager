@@ -1,6 +1,7 @@
-package umoo.wang.beanmanager.server.persistence.support;
+package umoo.wang.beanmanager.persistence.support;
 
 import org.objectweb.asm.ClassWriter;
+import umoo.wang.beanmanager.common.exception.ManagerException;
 import umoo.wang.beanmanager.common.exception.ServerException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -35,7 +36,7 @@ public class DynamicMapperCreator {
 					"defineClass", String.class, byte[].class, int.class,
 					int.class);
 		} catch (NoSuchMethodException e) {
-			throw ServerException.wrap(e);
+			throw ManagerException.wrap(e);
 		}
 
 		defineClazzMethod.setAccessible(true);

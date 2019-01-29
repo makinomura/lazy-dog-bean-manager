@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import umoo.wang.beanmanager.server.persistence.support.PrimaryKey;
+import umoo.wang.beanmanager.persistence.annotation.GenerateMapperClass;
+import umoo.wang.beanmanager.persistence.support.PrimaryKey;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -13,6 +14,7 @@ import java.util.Date;
 /**
  * Created by yuanchen on 2019/01/20.
  */
+@GenerateMapperClass
 @Data
 @Builder
 @NoArgsConstructor

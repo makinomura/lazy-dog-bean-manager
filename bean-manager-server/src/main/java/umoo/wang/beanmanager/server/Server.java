@@ -19,9 +19,9 @@ import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
 import umoo.wang.beanmanager.message.reply.ReplyRegister;
-import umoo.wang.beanmanager.server.persistence.SqlSessionManager;
+import umoo.wang.beanmanager.persistence.SqlSessionManager;
+import umoo.wang.beanmanager.persistence.generated.mapper.VersionMapper;
 import umoo.wang.beanmanager.server.persistence.entity.Version;
-import umoo.wang.beanmanager.server.persistence.support.Mapper;
 
 import java.util.Date;
 
@@ -66,8 +66,8 @@ public class Server {
 
 		Version version = SqlSessionManager.execute(false, sqlSession -> {
 
-			Mapper<Integer, Version> versionMapper = sqlSession
-					.getMapperWithEntityClazz(Version.class);
+			VersionMapper versionMapper = sqlSession
+					.getMapper(VersionMapper.class);
 
 			sqlSession.registerCallbackAfterCommit(() -> {
 				logger.info("commit");

@@ -1,8 +1,8 @@
-package umoo.wang.beanmanager.server.persistence;
+package umoo.wang.beanmanager.persistence;
 
 import org.apache.ibatis.session.SqlSession;
 import umoo.wang.beanmanager.common.exception.ServerException;
-import umoo.wang.beanmanager.server.persistence.support.DynamicMapperCreator;
+import umoo.wang.beanmanager.persistence.support.DynamicMapperCreator;
 
 /**
  * Created by yuanchen on 2019/01/24.

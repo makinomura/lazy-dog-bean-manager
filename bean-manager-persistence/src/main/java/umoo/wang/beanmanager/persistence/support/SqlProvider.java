@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.server.persistence.support;
+package umoo.wang.beanmanager.persistence.support;
 
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import umoo.wang.beanmanager.common.exception.ServerException;

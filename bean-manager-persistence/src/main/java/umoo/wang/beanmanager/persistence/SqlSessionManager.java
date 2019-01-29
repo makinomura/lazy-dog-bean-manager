@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.server.persistence;
+package umoo.wang.beanmanager.persistence;
 
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
@@ -9,9 +9,9 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import umoo.wang.beanmanager.common.exception.ServerException;
-import umoo.wang.beanmanager.server.persistence.support.DynamicMapperCreator;
-import umoo.wang.beanmanager.server.persistence.support.InsertKeyInterceptor;
+import umoo.wang.beanmanager.common.exception.ManagerException;
+import umoo.wang.beanmanager.persistence.support.DynamicMapperCreator;
+import umoo.wang.beanmanager.persistence.support.InsertKeyInterceptor;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -80,7 +80,7 @@ public class SqlSessionManager {
 			}
 		}
 
-		throw ServerException.wrap(e);
+		throw ManagerException.wrap(e);
 	}
 
 	private static void buildSqlSessionFactory() {
@@ -106,7 +106,7 @@ public class SqlSessionManager {
 			sqlSessionFactory = sqlSessionFactoryBuilder.build(configuration);
 		} catch (ClassNotFoundException e) {
 			logger.error("Connection establish failed!", e);
-			throw ServerException.wrap(e);
+			throw ManagerException.wrap(e);
 		}
 	}
 }

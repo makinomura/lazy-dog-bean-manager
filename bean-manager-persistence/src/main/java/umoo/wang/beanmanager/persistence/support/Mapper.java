@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.server.persistence.support;
+package umoo.wang.beanmanager.persistence.support;
 
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;

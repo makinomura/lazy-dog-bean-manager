@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.server.persistence;
+package umoo.wang.beanmanager.persistence;
 
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.cursor.Cursor;
@@ -9,9 +9,9 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import umoo.wang.beanmanager.server.persistence.support.DynamicMapperCreator;
-import umoo.wang.beanmanager.server.persistence.support.Mapper;
-import umoo.wang.beanmanager.server.persistence.support.PrimaryKey;
+import umoo.wang.beanmanager.persistence.support.DynamicMapperCreator;
+import umoo.wang.beanmanager.persistence.support.Mapper;
+import umoo.wang.beanmanager.persistence.support.PrimaryKey;
 
 import java.sql.Connection;
 import java.util.ArrayList;

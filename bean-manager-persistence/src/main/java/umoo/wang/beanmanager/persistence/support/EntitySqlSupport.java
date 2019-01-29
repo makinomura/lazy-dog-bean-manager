@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.server.persistence.support;
+package umoo.wang.beanmanager.persistence.support;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package umoo.wang.beanmanager.server.persistence;
+package umoo.wang.beanmanager.persistence;
 
 import umoo.wang.beanmanager.common.PropertyResolver;
 
