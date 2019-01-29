@@ -32,7 +32,8 @@ public class MapperAnnotationProcessor extends AbstractProcessor {
 	private final static String GENERATED_MAPPER_NAME = "%sMapper";
 
 	private final static String GENERATED_MAPPER_CODE_TEMPLATE = "package %s;\n"
-			+ "\nimport %s;\n"
+			+ "\nimport %s;\n" + "\n/**\n"
+			+ " * Auto generated file. Don't edit it!\n" + " */\n"
 			+ "\npublic interface %s extends Mapper<%s, %s> {\n" + "}\n";
 
 	private Filer filer;
