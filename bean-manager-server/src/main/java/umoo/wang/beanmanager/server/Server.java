@@ -18,14 +18,9 @@ import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
 import umoo.wang.beanmanager.message.reply.ReplyRegister;
-import umoo.wang.beanmanager.persistence.SqlSessionManager;
-import umoo.wang.beanmanager.persistence.generated.mapper.VersionMapper;
-import umoo.wang.beanmanager.server.persistence.entity.Version;
 import umoo.wang.beanmanager.server.processor.AckProcessor;
 import umoo.wang.beanmanager.server.processor.ServerHeartBeatCommandProcessor;
 import umoo.wang.beanmanager.server.processor.ServerRegisterCommandProcessor;
-
-import java.util.Date;
 
 /**
  * Created by yuanchen on 2019/01/11. Server负责与Client通讯

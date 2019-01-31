@@ -3,13 +3,14 @@ package umoo.wang.beanmanager.web.support;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import umoo.wang.beanmanager.common.util.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by yuanchen on 2019/01/31.
@@ -115,28 +116,10 @@ public class ControllerAdaptor extends AbstractRequestProcessor {
 		return path;
 	}
 
+	@Data
+	@AllArgsConstructor
 	private static class MappingConfig {
 		HttpMethod method;
 		String path;
-
-		MappingConfig(HttpMethod method, String path) {
-			this.method = method;
-			this.path = path;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o)
-				return true;
-			if (o == null || getClass() != o.getClass())
-				return false;
-			MappingConfig that = (MappingConfig) o;
-			return method.equals(that.method) && path.equals(that.path);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(method, path);
-		}
 	}
 }
