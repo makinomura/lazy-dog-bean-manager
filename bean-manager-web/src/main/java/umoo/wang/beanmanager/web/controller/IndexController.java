@@ -11,6 +11,6 @@ public class IndexController {
 
 	@Mapping(path = "/hello")
 	public String hello(FullHttpRequest request) {
-		return "hello";
+		return "hello world!";
 	}
 }
