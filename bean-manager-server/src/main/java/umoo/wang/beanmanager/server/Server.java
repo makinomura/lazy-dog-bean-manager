@@ -67,29 +67,6 @@ public class Server {
 	}
 
 	public static void main(String[] args) {
-
-		Version version = SqlSessionManager.execute(false, sqlSession -> {
-
-			VersionMapper versionMapper = sqlSession
-					.getMapper(VersionMapper.class);
-
-			sqlSession.registerCallbackAfterCommit(() -> {
-				logger.info("commit");
-			});
-
-			Version obj = Version.builder().versionName("111").appId(1)
-					.environmentId(1).num(1).publishTime(new Date()).build();
-			versionMapper.save(obj);
-
-			System.out.println(obj);
-
-			// throw new ServerException();
-
-			return obj;
-		});
-
-		System.out.println(version);
-
 		String host = PropertyResolver.read("lazydog.server.host");
 		Integer port = PropertyResolver.read("lazydog.server.port",
 				Integer.class);
