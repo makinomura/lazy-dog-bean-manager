@@ -60,6 +60,8 @@ public class ControllerAdaptor extends AbstractRequestProcessor {
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 			return error(e);
+		} finally {
+			currentHandleMethod.set(null);
 		}
 	}
 
