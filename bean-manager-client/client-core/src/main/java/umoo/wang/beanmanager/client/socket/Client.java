@@ -12,6 +12,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.common.beanfactory.InjectBeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
 import umoo.wang.beanmanager.common.exception.ClientException;
@@ -38,11 +39,9 @@ public class Client {
 
 	private HeartBeatTask heartBeatTask;
 	private ChannelFuture channelFuture;
-	private ClientConfig config;
 
-	public Client() {
-		this.config = ClientConfig.read();
-	}
+	@Inject
+	private ClientConfig config;
 
 	/**
 	 * 构建beans
@@ -61,11 +60,14 @@ public class Client {
 		// Replyable消息回调
 		beanFactory.createBean(ReplyInvoker.class);
 
+		beanFactory.createBean(ClientConfig.class);
+		beanFactory.createBean(Client.class);
+
 		beanFactory.doInject();
 	}
 
 	public static void start() {
-		beanFactory.createBean(Client.class).connect();
+		beanFactory.getBean(Client.class).connect();
 	}
 
 	public void connect() {

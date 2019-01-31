@@ -11,7 +11,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import umoo.wang.beanmanager.common.PropertyResolver;
+import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.common.beanfactory.InjectBeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
 import umoo.wang.beanmanager.message.codec.CommandDecoder;
@@ -38,6 +38,9 @@ public class Server {
 		buildBeans();
 	}
 
+	@Inject
+	private ServerConfig config;
+
 	/**
 	 * 构建Beans
 	 */
@@ -58,14 +61,17 @@ public class Server {
 		// Replyable消息回调
 		beanFactory.createBean(ReplyInvoker.class);
 
+		beanFactory.createBean(ServerConfig.class);
+		beanFactory.createBean(Server.class);
+
 		beanFactory.doInject();
 	}
 
 	public static void main(String[] args) {
-		String host = PropertyResolver.read("lazydog.server.host");
-		Integer port = PropertyResolver.read("lazydog.server.port",
-				Integer.class);
+		beanFactory.getBean(Server.class).run();
+	}
 
+	private void run() {
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		bootstrap.group(bossGroup, workerGroup)
 				.channel(NioServerSocketChannel.class)
@@ -88,7 +94,8 @@ public class Server {
 				}).childOption(ChannelOption.SO_KEEPALIVE, true);
 
 		try {
-			ChannelFuture f = bootstrap.bind(host, port);
+			ChannelFuture f = bootstrap.bind(config.getHost(),
+					config.getPort());
 			logger.info("Server start...");
 			f.sync();
 		} catch (InterruptedException e) {

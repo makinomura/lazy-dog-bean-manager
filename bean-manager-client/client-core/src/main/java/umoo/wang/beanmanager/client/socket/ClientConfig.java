@@ -1,39 +1,20 @@
 package umoo.wang.beanmanager.client.socket;
 
-import umoo.wang.beanmanager.common.PropertyResolver;
+import umoo.wang.beanmanager.common.beanfactory.Conf;
 
 /**
  * Created by yuanchen on 2019/01/23.
  */
 public class ClientConfig {
-	private static ClientConfig cache = null;
+
+	@Conf("lazydog.server.host")
 	private String host;
+	@Conf("lazydog.server.port")
 	private Integer port;
+	@Conf("lazydog.app.name")
 	private String appName;
+	@Conf("lazydog.environment.name")
 	private String environmentName;
-
-	public ClientConfig(String host, Integer port, String appName,
-			String environmentName) {
-		this.host = host;
-		this.port = port;
-		this.appName = appName;
-		this.environmentName = environmentName;
-	}
-
-	public static ClientConfig read() {
-		if (cache == null) {
-			String host = PropertyResolver.read("lazydog.server.host");
-			Integer port = PropertyResolver.read("lazydog.server.port",
-					Integer.class);
-			String appName = PropertyResolver.read("lazydog.app.name");
-			String environmentName = PropertyResolver
-					.read("lazydog.environment.name");
-
-			cache = new ClientConfig(host, port, appName, environmentName);
-		}
-
-		return cache;
-	}
 
 	public String getHost() {
 		return host;

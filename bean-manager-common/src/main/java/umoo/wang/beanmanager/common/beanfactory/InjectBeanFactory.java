@@ -1,5 +1,6 @@
 package umoo.wang.beanmanager.common.beanfactory;
 
+import umoo.wang.beanmanager.common.PropertyResolver;
 import umoo.wang.beanmanager.common.exception.ManagerException;
 
 import java.lang.reflect.Field;
@@ -33,7 +34,7 @@ public class InjectBeanFactory implements BeanFactory {
 		return delegate.createBean(clazz, args);
 	}
 
-	private void doInject(Object bean) {
+	private void doInjectBean(Object bean) {
 		Field[] declaredFields = bean.getClass().getDeclaredFields();
 
 		for (Field field : declaredFields) {
@@ -79,9 +80,34 @@ public class InjectBeanFactory implements BeanFactory {
 		}
 	}
 
+	private void doInjectConf(Object bean) {
+		Field[] declaredFields = bean.getClass().getDeclaredFields();
+
+		for (Field field : declaredFields) {
+			field.setAccessible(true);
+
+			Conf conf = field.getAnnotation(Conf.class);
+			if (conf != null) {
+				Class<?> requireType = field.getType();
+
+				Object requireBean = PropertyResolver.read(conf.value(),
+						requireType);
+
+				if (requireBean != null) {
+					try {
+						field.set(bean, requireBean);
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
 	public void doInject() {
 		List<Object> beans = delegate.getBean((bean) -> true);
-		beans.forEach(this::doInject);
+		beans.forEach(this::doInjectBean);
+		beans.forEach(this::doInjectConf);
 		beans.forEach(this::doPostConstruct);
 	}
 }
