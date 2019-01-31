@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.PropertyResolver;
 import umoo.wang.beanmanager.common.beanfactory.InjectBeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
-import umoo.wang.beanmanager.web.controller.IndexController;
+import umoo.wang.beanmanager.web.controller.VersionController;
 
 /**
  * Created by yuanchen on 2019/01/30.
@@ -44,7 +44,7 @@ public class WebServer {
 	private static void buildBeans() {
 		beanFactory.createBean(MainInHandler.class);
 		beanFactory.createBean(CoreRequestProcessor.class);
-		beanFactory.createBean(IndexController.class);
+		beanFactory.createBean(VersionController.class);
 
 		beanFactory.doInject();
 	}

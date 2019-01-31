@@ -30,14 +30,24 @@ public class ControllerAdaptor extends AbstractRequestProcessor {
 	@Override
 	public boolean support(FullHttpRequest request) {
 
+		Method bestMatchMethod = null;
+		String bestMatchPath = "/";
+
 		for (Map.Entry<MappingConfig, Method> entry : mappingMethod
 				.entrySet()) {
 			MappingConfig config = entry.getKey();
 			if (request.method().equals(config.method)
 					&& request.uri().startsWith(config.path)) {
-				currentHandleMethod.set(entry.getValue());
-				return true;
+				if (config.path.length() > bestMatchPath.length()) {
+					bestMatchPath = config.path;
+					bestMatchMethod = entry.getValue();
+				}
 			}
+		}
+
+		if (bestMatchMethod != null) {
+			currentHandleMethod.set(bestMatchMethod);
+			return true;
 		}
 
 		return false;
