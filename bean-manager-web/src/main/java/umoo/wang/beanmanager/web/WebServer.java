@@ -15,10 +15,11 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import umoo.wang.beanmanager.common.PropertyResolver;
+import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.common.beanfactory.InjectBeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
 import umoo.wang.beanmanager.web.controller.VersionController;
+import umoo.wang.beanmanager.web.support.StaticResourceRequestProcessor;
 
 /**
  * Created by yuanchen on 2019/01/30.
@@ -38,22 +39,29 @@ public class WebServer {
 		buildBeans();
 	}
 
+	@Inject
+	private WebServerConfig config;
+
 	/**
 	 * 构建Beans
 	 */
 	private static void buildBeans() {
 		beanFactory.createBean(MainInHandler.class);
 		beanFactory.createBean(CoreRequestProcessor.class);
+		beanFactory.createBean(StaticResourceRequestProcessor.class);
 		beanFactory.createBean(VersionController.class);
+
+		beanFactory.createBean(WebServerConfig.class);
+		beanFactory.createBean(WebServer.class);
 
 		beanFactory.doInject();
 	}
 
 	public static void main(String[] args) {
-		String host = PropertyResolver.read("lazydog.web.server.host");
-		Integer port = PropertyResolver.read("lazydog.web.server.port",
-				Integer.class);
+		beanFactory.getBean(WebServer.class).run();
+	}
 
+	public void run() {
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		bootstrap.group(bossGroup, workerGroup)
 				.channel(NioServerSocketChannel.class)
@@ -72,8 +80,9 @@ public class WebServer {
 				}).childOption(ChannelOption.SO_KEEPALIVE, true);
 
 		try {
-			ChannelFuture f = bootstrap.bind(host, port);
-			logger.info("Server start...");
+			ChannelFuture f = bootstrap.bind(config.getHost(),
+					config.getPort());
+			logger.info("WebServer start...");
 			f.sync();
 		} catch (InterruptedException e) {
 			// 出错关闭bossGroup和workerGroup

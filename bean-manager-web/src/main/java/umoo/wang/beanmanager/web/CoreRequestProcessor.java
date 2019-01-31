@@ -5,7 +5,6 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
@@ -14,6 +13,7 @@ import umoo.wang.beanmanager.common.beanfactory.PostConstruct;
 import umoo.wang.beanmanager.web.support.AbstractRequestProcessor;
 import umoo.wang.beanmanager.web.support.ControllerAdaptor;
 import umoo.wang.beanmanager.web.support.RequestProcessor;
+import umoo.wang.beanmanager.web.support.StaticResourceRequestProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +33,12 @@ public class CoreRequestProcessor implements RequestProcessor {
 
 	@Inject
 	private BeanFactory beanFactory;
+	@Inject
+	private StaticResourceRequestProcessor staticResourceRequestProcessor;
 
 	@PostConstruct
 	private void init() {
+		processors.add(staticResourceRequestProcessor);
 		beanFactory
 				.getBean((bean) -> bean.getClass().getName()
 						.endsWith("Controller"))
@@ -81,7 +84,8 @@ public class CoreRequestProcessor implements RequestProcessor {
 
 		@Override
 		public FullHttpResponse process(FullHttpRequest request) {
-			return new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status);
+			return new DefaultFullHttpResponse(request.protocolVersion(),
+					status);
 		}
 	}
 }

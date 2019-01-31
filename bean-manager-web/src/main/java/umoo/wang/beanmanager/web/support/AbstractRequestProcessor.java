@@ -1,14 +1,16 @@
 package umoo.wang.beanmanager.web.support;
 
 import com.alibaba.fastjson.JSON;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 
 /**
  * Created by yuanchen on 2019/01/30.
@@ -16,10 +18,12 @@ import io.netty.handler.codec.http.HttpVersion;
 public abstract class AbstractRequestProcessor implements RequestProcessor {
 
 	protected ChannelHandlerContext ctx;
+	protected FullHttpRequest request;
 
 	@Override
 	public boolean process(ChannelHandlerContext ctx, FullHttpRequest request) {
 		this.ctx = ctx;
+		this.request = request;
 
 		if (!support(request)) {
 			return false;
@@ -36,10 +40,24 @@ public abstract class AbstractRequestProcessor implements RequestProcessor {
 
 	public FullHttpResponse json(HttpResponseStatus status, Object obj) {
 		if (obj == null) {
-			return new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status);
+			return new DefaultFullHttpResponse(request.protocolVersion(),
+					status);
 		}
-		return new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status,
-				ByteBufUtil.writeUtf8(ctx.alloc(), JSON.toJSONString(obj)));
+
+		ByteBuf byteBuf = ByteBufUtil.writeUtf8(ctx.alloc(),
+				JSON.toJSONString(obj));
+
+		DefaultFullHttpResponse response = new DefaultFullHttpResponse(
+				request.protocolVersion(), status, byteBuf, true);
+
+		response.headers().set(HttpHeaderNames.CONTENT_TYPE,
+				"application/json;charset=UTF-8");
+		response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
+				byteBuf.readableBytes());
+		response.headers().set(HttpHeaderNames.CONNECTION,
+				HttpHeaderValues.KEEP_ALIVE);
+
+		return response;
 	}
 
 	public FullHttpResponse ok(Object obj) {
