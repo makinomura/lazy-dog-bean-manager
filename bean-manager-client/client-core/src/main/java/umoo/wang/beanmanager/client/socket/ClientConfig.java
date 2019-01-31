@@ -20,6 +20,21 @@ public class ClientConfig {
 		this.environmentName = environmentName;
 	}
 
+	public static ClientConfig read() {
+		if (cache == null) {
+			String host = PropertyResolver.read("lazydog.server.host");
+			Integer port = PropertyResolver.read("lazydog.server.port",
+					Integer.class);
+			String appName = PropertyResolver.read("lazydog.app.name");
+			String environmentName = PropertyResolver
+					.read("lazydog.environment.name");
+
+			cache = new ClientConfig(host, port, appName, environmentName);
+		}
+
+		return cache;
+	}
+
 	public String getHost() {
 		return host;
 	}
@@ -41,20 +56,5 @@ public class ClientConfig {
 		return "ClientConfig{" + "host='" + host + '\'' + ", port=" + port
 				+ ", appName='" + appName + '\'' + ", environmentName='"
 				+ environmentName + '\'' + '}';
-	}
-
-	public static ClientConfig read() {
-		if (cache == null) {
-			String host = PropertyResolver.read("lazydog.server.host");
-			Integer port = PropertyResolver.read("lazydog.server.port",
-					Integer.class);
-			String appName = PropertyResolver.read("lazydog.app.name");
-			String environmentName = PropertyResolver
-					.read("lazydog.environment.name");
-
-			cache = new ClientConfig(host, port, appName, environmentName);
-		}
-
-		return cache;
 	}
 }

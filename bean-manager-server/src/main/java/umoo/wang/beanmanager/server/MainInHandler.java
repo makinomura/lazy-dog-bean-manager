@@ -8,8 +8,8 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.message.Command;
-import umoo.wang.beanmanager.message.CommandProcessor;
 
 /**
  * Created by yuanchen on 2019/01/11. 主要handler 保存/移除client的channel实体
@@ -21,11 +21,8 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 	static ChannelGroup channels = new DefaultChannelGroup("clients",
 			GlobalEventExecutor.INSTANCE);
 
-	private CommandProcessor commandProcessor;
-
-	public MainInHandler(CommandProcessor commandProcessor) {
-		this.commandProcessor = commandProcessor;
-	}
+	@Inject
+	private ServerCommandProcessor commandProcessor;
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -53,6 +50,5 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 			throws Exception {
 		cause.printStackTrace();
 	}
-
 
 }

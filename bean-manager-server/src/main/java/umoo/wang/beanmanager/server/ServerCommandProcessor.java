@@ -3,14 +3,14 @@ package umoo.wang.beanmanager.server;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
+import umoo.wang.beanmanager.common.beanfactory.Inject;
+import umoo.wang.beanmanager.common.beanfactory.PostConstruct;
 import umoo.wang.beanmanager.common.util.EnumUtil;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.CommandTargetEnum;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
-import umoo.wang.beanmanager.server.processor.AckProcessor;
-import umoo.wang.beanmanager.server.processor.ServerHeartBeatCommandProcessor;
-import umoo.wang.beanmanager.server.processor.ServerRegisterCommandProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +22,19 @@ public class ServerCommandProcessor implements CommandProcessor {
 	private final static Logger logger = LoggerFactory
 			.getLogger(ServerCommandProcessor.class);
 
-	private static List<CommandProcessor> processors = new ArrayList<>();
+	private List<CommandProcessor> processors = new ArrayList<>();
 
-	static {
-		processors.add(new AckProcessor());
-		processors.add(new ServerHeartBeatCommandProcessor());
-		processors.add(new ServerRegisterCommandProcessor());
+	@Inject
+	private BeanFactory beanFactory;
+
+	@PostConstruct
+	private void init() {
+		beanFactory
+				.getBean((bean) -> CommandProcessor.class
+						.isAssignableFrom(bean.getClass())
+						&& bean.getClass() != ServerCommandProcessor.class)
+				.stream().map(bean -> (CommandProcessor) bean)
+				.forEach(processors::add);
 	}
 
 	@Override

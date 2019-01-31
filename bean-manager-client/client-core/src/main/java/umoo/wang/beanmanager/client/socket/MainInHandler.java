@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 
@@ -19,11 +20,8 @@ public class MainInHandler extends SimpleChannelInboundHandler {
 	private final static Logger logger = LoggerFactory
 			.getLogger(MainInHandler.class);
 
+	@Inject
 	private CommandProcessor commandProcessor;
-
-	public MainInHandler(CommandProcessor commandProcessor) {
-		this.commandProcessor = commandProcessor;
-	}
 
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, Object msg)

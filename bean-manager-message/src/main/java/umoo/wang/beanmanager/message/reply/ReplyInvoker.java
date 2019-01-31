@@ -3,6 +3,7 @@ package umoo.wang.beanmanager.message.reply;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.common.util.StringUtil;
 import umoo.wang.beanmanager.message.Command;
 
@@ -12,11 +13,8 @@ import umoo.wang.beanmanager.message.Command;
 @ChannelHandler.Sharable
 public class ReplyInvoker extends SimpleChannelInboundHandler {
 
+	@Inject
 	private ReplyRegister register;
-
-	public ReplyInvoker(ReplyRegister register) {
-		this.register = register;
-	}
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Object msg)

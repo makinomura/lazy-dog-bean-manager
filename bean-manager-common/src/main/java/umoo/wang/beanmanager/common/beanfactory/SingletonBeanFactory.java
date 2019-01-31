@@ -30,10 +30,15 @@ public class SingletonBeanFactory implements BeanFactory {
 		wrapperMap.put(Double.TYPE.getName(), Double.class);
 		wrapperMap.put(Void.TYPE.getName(), Void.class);
 	}
+
 	private Map<Class<?>, Object> beans = new HashMap<>();
 
 	@Override
 	public <T> T getBean(Class<T> clazz) {
+		if (BeanFactory.class.isAssignableFrom(clazz)) {
+			return (T) this;
+		}
+
 		T bean = (T) beans.get(clazz);
 
 		// 如果直接类型查找不到就找子类型

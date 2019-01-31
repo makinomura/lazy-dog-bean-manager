@@ -38,7 +38,7 @@ public class HeartBeatTask {
 					(Boolean success, Integer result) -> {
 						logger.info("Receive server response: " + result);
 					}));
-		}, 0, heartBeatIntervals, TimeUnit.MILLISECONDS);
+		}, 1000L, heartBeatIntervals, TimeUnit.MILLISECONDS);
 	}
 
 	public void shutdown() {

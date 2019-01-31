@@ -12,10 +12,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
+import umoo.wang.beanmanager.common.beanfactory.InjectBeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
 import umoo.wang.beanmanager.common.exception.ClientException;
-import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
@@ -29,7 +28,8 @@ import umoo.wang.beanmanager.message.server.message.ServerRegisterMessage;
 public class Client {
 
 	// client的对象工厂
-	public final static BeanFactory beanFactory = new SingletonBeanFactory();
+	public final static InjectBeanFactory beanFactory = new InjectBeanFactory(
+			new SingletonBeanFactory());
 	private final static Logger logger = LoggerFactory.getLogger(Client.class);
 
 	static {
@@ -53,17 +53,15 @@ public class Client {
 		// Command编码
 		beanFactory.createBean(CommandEncoder.class);
 		// Command消息处理器
-		CommandProcessor commandProcessor = beanFactory
-				.createBean(ClientCommandProcessor.class);
-
+		beanFactory.createBean(ClientCommandProcessor.class);
 		// 消息入口
-		beanFactory.createBean(MainInHandler.class, commandProcessor);
-
+		beanFactory.createBean(MainInHandler.class);
 		// Replyable消息注册
-		ReplyRegister register = beanFactory.createBean(ReplyRegister.class, 5,
-				50000L);
+		beanFactory.createBean(ReplyRegister.class, 5, 50000L);
 		// Replyable消息回调
-		beanFactory.createBean(ReplyInvoker.class, register);
+		beanFactory.createBean(ReplyInvoker.class);
+
+		beanFactory.doInject();
 	}
 
 	public static void start() {
