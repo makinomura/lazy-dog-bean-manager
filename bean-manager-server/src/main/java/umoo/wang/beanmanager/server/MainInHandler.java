@@ -8,12 +8,14 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.message.Command;
 
 /**
  * Created by yuanchen on 2019/01/11. 主要handler 保存/移除client的channel实体
  */
+@Bean
 @ChannelHandler.Sharable
 public class MainInHandler extends SimpleChannelInboundHandler {
 	private final static Logger logger = LoggerFactory.getLogger(Server.class);

@@ -2,12 +2,14 @@ package umoo.wang.beanmanager.common.beanfactory;
 
 import umoo.wang.beanmanager.common.PropertyResolver;
 import umoo.wang.beanmanager.common.exception.ManagerException;
+import umoo.wang.beanmanager.common.util.ClassUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Created by yuanchen on 2019/01/30. 支持依赖注入和初始化的BeanFactory
@@ -15,8 +17,11 @@ import java.util.function.Predicate;
 public class InjectBeanFactory implements BeanFactory {
 	private BeanFactory delegate;
 
-	public InjectBeanFactory(BeanFactory delegate) {
+	public InjectBeanFactory(BeanFactory delegate, String... rootPackageNames) {
 		this.delegate = delegate;
+
+		Stream.of(rootPackageNames).forEach(this::doScan);
+		doInject();
 	}
 
 	@Override
@@ -104,10 +109,18 @@ public class InjectBeanFactory implements BeanFactory {
 		}
 	}
 
-	public void doInject() {
+	private void doInject() {
 		List<Object> beans = delegate.getBean((bean) -> true);
 		beans.forEach(this::doInjectBean);
 		beans.forEach(this::doInjectConf);
 		beans.forEach(this::doPostConstruct);
+	}
+
+	private void doScan(String rootPackageName) {
+		ClassUtil
+				.scan(Thread.currentThread().getContextClassLoader(),
+						rootPackageName)
+				.stream().filter(clazz -> clazz.isAnnotationPresent(Bean.class))
+				.forEach(clazz -> createBean(clazz));
 	}
 }

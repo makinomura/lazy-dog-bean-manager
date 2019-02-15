@@ -7,6 +7,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.common.beanfactory.PostConstruct;
@@ -21,6 +22,7 @@ import java.util.List;
 /**
  * Created by yuanchen on 2019/01/30.
  */
+@Bean
 public class CoreRequestProcessor implements RequestProcessor {
 
 	private final static Logger logger = LoggerFactory

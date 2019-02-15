@@ -12,6 +12,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
+import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.common.beanfactory.InjectBeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
@@ -23,48 +25,24 @@ import umoo.wang.beanmanager.message.reply.ReplyRegister;
 import umoo.wang.beanmanager.message.server.command.ServerRegisterCommand;
 import umoo.wang.beanmanager.message.server.message.ServerRegisterMessage;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by yuanchen on 2019/01/11. Client通讯类
  */
+@Bean
 public class Client {
-
+	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager.client";
 	// client的对象工厂
-	public final static InjectBeanFactory beanFactory = new InjectBeanFactory(
-			new SingletonBeanFactory());
+	public final static BeanFactory beanFactory = new InjectBeanFactory(
+			new SingletonBeanFactory(), ROOT_PACKAGE_NAME);
 	private final static Logger logger = LoggerFactory.getLogger(Client.class);
-
-	static {
-		buildBeans();
-	}
 
 	private HeartBeatTask heartBeatTask;
 	private ChannelFuture channelFuture;
 
 	@Inject
 	private ClientConfig config;
-
-	/**
-	 * 构建beans
-	 */
-	private static void buildBeans() {
-		// Command解码
-		beanFactory.createBean(CommandDecoder.class);
-		// Command编码
-		beanFactory.createBean(CommandEncoder.class);
-		// Command消息处理器
-		beanFactory.createBean(ClientCommandProcessor.class);
-		// 消息入口
-		beanFactory.createBean(MainInHandler.class);
-		// Replyable消息注册
-		beanFactory.createBean(ReplyRegister.class, 5, 50000L);
-		// Replyable消息回调
-		beanFactory.createBean(ReplyInvoker.class);
-
-		beanFactory.createBean(ClientConfig.class);
-		beanFactory.createBean(Client.class);
-
-		beanFactory.doInject();
-	}
 
 	public static void start() {
 		beanFactory.getBean(Client.class).connect();
@@ -79,14 +57,10 @@ public class Client {
 					protected void initChannel(SocketChannel channel)
 							throws Exception {
 						ChannelPipeline pipeline = channel.pipeline();
-						pipeline.addLast(
-								beanFactory.getBean(CommandDecoder.class));
-						pipeline.addLast(
-								beanFactory.getBean(ReplyInvoker.class));
-						pipeline.addLast(
-								beanFactory.getBean(CommandEncoder.class));
-						pipeline.addLast(
-								beanFactory.getBean(ReplyRegister.class));
+						pipeline.addLast(new CommandDecoder());
+						pipeline.addLast(new ReplyInvoker());
+						pipeline.addLast(new CommandEncoder());
+						pipeline.addLast(new ReplyRegister(5, 50000L));
 						pipeline.addLast(
 								beanFactory.getBean(MainInHandler.class));
 					}
@@ -100,8 +74,8 @@ public class Client {
 					logger.info("Server connect successful!");
 
 					// 连接Server成功开始心跳任务
-					heartBeatTask = beanFactory.createBean(HeartBeatTask.class,
-							channelFuture.channel(), 60000L);
+					heartBeatTask = new HeartBeatTask(channelFuture.channel(),
+							60000L);
 
 					heartBeatTask.start();
 
@@ -137,9 +111,11 @@ public class Client {
 	}
 
 	private void doRegister(Channel channel) {
-		channel.writeAndFlush(
-				new ServerRegisterCommand(new ServerRegisterMessage(
-						config.getAppName(), config.getEnvironmentName())));
+		channel.eventLoop().schedule(() -> {
+			channel.writeAndFlush(
+					new ServerRegisterCommand(new ServerRegisterMessage(
+							config.getAppName(), config.getEnvironmentName())));
+		}, 1000L, TimeUnit.MILLISECONDS);
 	}
 
 	@Override

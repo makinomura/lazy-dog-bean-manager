@@ -5,6 +5,7 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.Conf;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.io.InputStream;
 /**
  * Created by yuanchen on 2019/01/31. 处理静态资源
  */
+@Bean
 public class StaticResourceRequestProcessor extends AbstractRequestProcessor {
 
 	@Conf("static.request.path")
@@ -28,6 +30,11 @@ public class StaticResourceRequestProcessor extends AbstractRequestProcessor {
 	@Override
 	public FullHttpResponse process(FullHttpRequest request) {
 		String filePath = request.uri().substring(requestPath.length());
+		int indexOf = filePath.indexOf("?");
+		if (indexOf != -1) {
+			filePath = filePath.substring(0, indexOf);
+		}
+
 		InputStream resourceStream = Thread.currentThread()
 				.getContextClassLoader()
 				.getResourceAsStream(resourcePath + filePath);

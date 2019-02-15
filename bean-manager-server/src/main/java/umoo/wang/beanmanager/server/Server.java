@@ -11,6 +11,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
+import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.common.beanfactory.InjectBeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
@@ -18,54 +20,23 @@ import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
 import umoo.wang.beanmanager.message.reply.ReplyRegister;
-import umoo.wang.beanmanager.server.processor.AckProcessor;
-import umoo.wang.beanmanager.server.processor.ServerHeartBeatCommandProcessor;
-import umoo.wang.beanmanager.server.processor.ServerRegisterCommandProcessor;
 
 /**
  * Created by yuanchen on 2019/01/11. Server负责与Client通讯
  */
+@Bean
 public class Server {
-	public final static InjectBeanFactory beanFactory = new InjectBeanFactory(
-			new SingletonBeanFactory());
+	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager.server";
+	public final static BeanFactory beanFactory = new InjectBeanFactory(
+			new SingletonBeanFactory(), ROOT_PACKAGE_NAME);
 	private final static EventLoopGroup bossGroup = new NioEventLoopGroup(
 			Runtime.getRuntime().availableProcessors() * 2);
 	private final static EventLoopGroup workerGroup = new NioEventLoopGroup(
 			100);
 	private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
-	static {
-		buildBeans();
-	}
-
 	@Inject
 	private ServerConfig config;
-
-	/**
-	 * 构建Beans
-	 */
-	private static void buildBeans() {
-		// Command解码
-		beanFactory.createBean(CommandDecoder.class);
-		// Command编码
-		beanFactory.createBean(CommandEncoder.class);
-		// Command消息处理器
-		beanFactory.createBean(ServerCommandProcessor.class);
-		beanFactory.createBean(AckProcessor.class);
-		beanFactory.createBean(ServerHeartBeatCommandProcessor.class);
-		beanFactory.createBean(ServerRegisterCommandProcessor.class);
-		// 消息入口
-		beanFactory.createBean(MainInHandler.class);
-		// Replyable消息注册
-		beanFactory.createBean(ReplyRegister.class, 5, 5000L);
-		// Replyable消息回调
-		beanFactory.createBean(ReplyInvoker.class);
-
-		beanFactory.createBean(ServerConfig.class);
-		beanFactory.createBean(Server.class);
-
-		beanFactory.doInject();
-	}
 
 	public static void main(String[] args) {
 		beanFactory.getBean(Server.class).run();
@@ -80,14 +51,10 @@ public class Server {
 					protected void initChannel(SocketChannel channel)
 							throws Exception {
 						ChannelPipeline pipeline = channel.pipeline();
-						pipeline.addLast(
-								beanFactory.getBean(CommandDecoder.class));
-						pipeline.addLast(
-								beanFactory.getBean(ReplyInvoker.class));
-						pipeline.addLast(
-								beanFactory.getBean(CommandEncoder.class));
-						pipeline.addLast(
-								beanFactory.getBean(ReplyRegister.class));
+						pipeline.addLast(new CommandDecoder());
+						pipeline.addLast(new ReplyInvoker());
+						pipeline.addLast(new CommandEncoder());
+						pipeline.addLast(new ReplyRegister(5, 5000L));
 						pipeline.addLast(
 								beanFactory.getBean(MainInHandler.class));
 					}

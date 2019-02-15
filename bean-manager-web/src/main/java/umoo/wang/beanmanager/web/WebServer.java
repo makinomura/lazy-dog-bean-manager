@@ -15,18 +15,20 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
+import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.common.beanfactory.InjectBeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
-import umoo.wang.beanmanager.web.controller.VersionController;
-import umoo.wang.beanmanager.web.support.StaticResourceRequestProcessor;
 
 /**
  * Created by yuanchen on 2019/01/30.
  */
+@Bean
 public class WebServer {
-	public final static InjectBeanFactory beanFactory = new InjectBeanFactory(
-			new SingletonBeanFactory());
+	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager.web";
+	public final static BeanFactory beanFactory = new InjectBeanFactory(
+			new SingletonBeanFactory(), ROOT_PACKAGE_NAME);
 	private final static EventLoopGroup bossGroup = new NioEventLoopGroup(
 			Runtime.getRuntime().availableProcessors() * 2);
 	private final static EventLoopGroup workerGroup = new NioEventLoopGroup(
@@ -35,27 +37,8 @@ public class WebServer {
 	private final static Logger logger = LoggerFactory
 			.getLogger(WebServer.class);
 
-	static {
-		buildBeans();
-	}
-
 	@Inject
 	private WebServerConfig config;
-
-	/**
-	 * 构建Beans
-	 */
-	private static void buildBeans() {
-		beanFactory.createBean(MainInHandler.class);
-		beanFactory.createBean(CoreRequestProcessor.class);
-		beanFactory.createBean(StaticResourceRequestProcessor.class);
-		beanFactory.createBean(VersionController.class);
-
-		beanFactory.createBean(WebServerConfig.class);
-		beanFactory.createBean(WebServer.class);
-
-		beanFactory.doInject();
-	}
 
 	public static void main(String[] args) {
 		beanFactory.getBean(WebServer.class).run();

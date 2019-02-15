@@ -1,6 +1,5 @@
 package umoo.wang.beanmanager.message.reply;
 
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
@@ -17,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by yuanchen on 2019/01/15. Replyable消息注册
  */
-@ChannelHandler.Sharable
 @SuppressWarnings("unchecked")
 public class ReplyRegister extends ChannelOutboundHandlerAdapter {
 

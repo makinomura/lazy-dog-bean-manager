@@ -1,10 +1,12 @@
 package umoo.wang.beanmanager.client.socket;
 
+import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.Conf;
 
 /**
  * Created by yuanchen on 2019/01/23.
  */
+@Bean
 public class ClientConfig {
 
 	@Conf("lazydog.server.host")

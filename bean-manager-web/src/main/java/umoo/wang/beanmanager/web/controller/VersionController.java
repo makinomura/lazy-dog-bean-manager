@@ -1,6 +1,7 @@
 package umoo.wang.beanmanager.web.controller;
 
 import io.netty.handler.codec.http.FullHttpRequest;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.persistence.SqlSessionManager;
 import umoo.wang.beanmanager.persistence.generated.mapper.VersionMapper;
 import umoo.wang.beanmanager.web.persistence.entity.Version;
@@ -12,6 +13,7 @@ import java.util.Map;
 /**
  * Created by yuanchen on 2019/01/31.
  */
+@Bean
 @Mapping(path = "/version")
 public class VersionController {
 

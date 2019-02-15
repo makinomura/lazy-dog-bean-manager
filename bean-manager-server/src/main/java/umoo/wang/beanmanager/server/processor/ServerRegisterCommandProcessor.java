@@ -3,6 +3,7 @@ package umoo.wang.beanmanager.server.processor;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
@@ -13,6 +14,7 @@ import umoo.wang.beanmanager.server.ClientStatusEnum;
 /**
  * Created by yuanchen on 2019/01/23.
  */
+@Bean
 public class ServerRegisterCommandProcessor implements CommandProcessor {
 	private final static Logger logger = LoggerFactory
 			.getLogger(ServerRegisterCommandProcessor.class);
