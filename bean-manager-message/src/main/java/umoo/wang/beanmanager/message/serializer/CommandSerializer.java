@@ -3,6 +3,7 @@ package umoo.wang.beanmanager.message.serializer;
 import umoo.wang.beanmanager.message.Command;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.ServiceLoader;
 
 /**
@@ -35,5 +36,5 @@ public interface CommandSerializer {
 	 * @param bytes
 	 * @return
 	 */
-	Command deserialize(byte[] bytes);
+	List<Command> deserialize(byte[] bytes);
 }

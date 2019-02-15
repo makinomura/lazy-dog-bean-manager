@@ -20,6 +20,6 @@ public class CommandDecoder extends MessageToMessageDecoder<ByteBuf> {
 			ByteBuf byteBuf, List<Object> list) throws Exception {
 
 		byte[] bytes = ByteBufUtil.getBytes(byteBuf);
-		list.add(serializer.deserialize(bytes));
+		list.addAll(serializer.deserialize(bytes));
 	}
 }
