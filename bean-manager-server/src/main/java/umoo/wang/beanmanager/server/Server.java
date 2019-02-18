@@ -37,6 +37,16 @@ public class Server {
 
 	@Inject
 	private ServerConfig config;
+	@Inject
+	private CommandDecoder commandDecoder;
+	@Inject
+	private CommandEncoder commandEncoder;
+	@Inject
+	private ReplyInvoker replyInvoker;
+	@Inject
+	private ReplyRegister replyRegister;
+	@Inject
+	private MainInHandler mainInHandler;
 
 	public static void main(String[] args) {
 		beanFactory.getBean(Server.class).run();
@@ -51,16 +61,11 @@ public class Server {
 					protected void initChannel(SocketChannel channel)
 							throws Exception {
 						ChannelPipeline pipeline = channel.pipeline();
-						pipeline.addLast(
-								beanFactory.getBean(CommandDecoder.class));
-						pipeline.addLast(
-								beanFactory.getBean(ReplyInvoker.class));
-						pipeline.addLast(
-								beanFactory.getBean(CommandEncoder.class));
-						pipeline.addLast(
-								beanFactory.getBean(ReplyRegister.class));
-						pipeline.addLast(
-								beanFactory.getBean(MainInHandler.class));
+						pipeline.addLast(commandDecoder);
+						pipeline.addLast(replyInvoker);
+						pipeline.addLast(commandEncoder);
+						pipeline.addLast(replyRegister);
+						pipeline.addLast(mainInHandler);
 					}
 				}).childOption(ChannelOption.SO_KEEPALIVE, true);
 

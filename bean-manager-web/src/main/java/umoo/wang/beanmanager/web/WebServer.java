@@ -39,6 +39,8 @@ public class WebServer {
 
 	@Inject
 	private WebServerConfig config;
+	@Inject
+	private MainInHandler mainInHandler;
 
 	public static void main(String[] args) {
 		beanFactory.getBean(WebServer.class).run();
@@ -57,8 +59,7 @@ public class WebServer {
 						pipeline.addLast(new HttpObjectAggregator(65536));
 						pipeline.addLast(new HttpResponseEncoder());
 						pipeline.addLast(new ChunkedWriteHandler());
-						pipeline.addLast(
-								beanFactory.getBean(MainInHandler.class));
+						pipeline.addLast(mainInHandler);
 					}
 				}).childOption(ChannelOption.SO_KEEPALIVE, true);
 
