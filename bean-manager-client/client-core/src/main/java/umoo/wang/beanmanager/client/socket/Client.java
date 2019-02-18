@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Bean
 public class Client {
-	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager.client";
+	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager";
 	// client的对象工厂
 	public final static BeanFactory beanFactory = new InjectBeanFactory(
 			new SingletonBeanFactory(), ROOT_PACKAGE_NAME);
@@ -57,10 +57,14 @@ public class Client {
 					protected void initChannel(SocketChannel channel)
 							throws Exception {
 						ChannelPipeline pipeline = channel.pipeline();
-						pipeline.addLast(new CommandDecoder());
-						pipeline.addLast(new ReplyInvoker());
-						pipeline.addLast(new CommandEncoder());
-						pipeline.addLast(new ReplyRegister(5, 50000L));
+						pipeline.addLast(
+								beanFactory.getBean(CommandDecoder.class));
+						pipeline.addLast(
+								beanFactory.getBean(ReplyInvoker.class));
+						pipeline.addLast(
+								beanFactory.getBean(CommandEncoder.class));
+						pipeline.addLast(
+								beanFactory.getBean(ReplyRegister.class));
 						pipeline.addLast(
 								beanFactory.getBean(MainInHandler.class));
 					}

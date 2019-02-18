@@ -26,7 +26,7 @@ import umoo.wang.beanmanager.message.reply.ReplyRegister;
  */
 @Bean
 public class Server {
-	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager.server";
+	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager";
 	public final static BeanFactory beanFactory = new InjectBeanFactory(
 			new SingletonBeanFactory(), ROOT_PACKAGE_NAME);
 	private final static EventLoopGroup bossGroup = new NioEventLoopGroup(
@@ -51,10 +51,14 @@ public class Server {
 					protected void initChannel(SocketChannel channel)
 							throws Exception {
 						ChannelPipeline pipeline = channel.pipeline();
-						pipeline.addLast(new CommandDecoder());
-						pipeline.addLast(new ReplyInvoker());
-						pipeline.addLast(new CommandEncoder());
-						pipeline.addLast(new ReplyRegister(5, 5000L));
+						pipeline.addLast(
+								beanFactory.getBean(CommandDecoder.class));
+						pipeline.addLast(
+								beanFactory.getBean(ReplyInvoker.class));
+						pipeline.addLast(
+								beanFactory.getBean(CommandEncoder.class));
+						pipeline.addLast(
+								beanFactory.getBean(ReplyRegister.class));
 						pipeline.addLast(
 								beanFactory.getBean(MainInHandler.class));
 					}

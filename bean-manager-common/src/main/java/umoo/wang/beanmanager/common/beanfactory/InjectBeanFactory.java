@@ -1,6 +1,7 @@
 package umoo.wang.beanmanager.common.beanfactory;
 
 import umoo.wang.beanmanager.common.PropertyResolver;
+import umoo.wang.beanmanager.common.converter.ConverterFactory;
 import umoo.wang.beanmanager.common.exception.ManagerException;
 import umoo.wang.beanmanager.common.util.ClassUtil;
 
@@ -95,8 +96,14 @@ public class InjectBeanFactory implements BeanFactory {
 			if (conf != null) {
 				Class<?> requireType = field.getType();
 
-				Object requireBean = PropertyResolver.read(conf.value(),
+				Object requireBean = PropertyResolver.read(conf.key(),
 						requireType);
+
+				if (requireBean == null
+						&& !Conf.DEFAULT_NONE.equals(conf.defaultValue())) {
+					requireBean = ConverterFactory.withType(requireType)
+							.convert(conf.defaultValue(), requireType);
+				}
 
 				if (requireBean != null) {
 					try {

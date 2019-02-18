@@ -17,9 +17,9 @@ import java.io.InputStream;
 @Bean
 public class StaticResourceRequestProcessor extends AbstractRequestProcessor {
 
-	@Conf("static.request.path")
+	@Conf(key = "static.request.path")
 	private String requestPath;
-	@Conf("static.resource.path")
+	@Conf(key = "static.resource.path")
 	private String resourcePath;
 
 	@Override

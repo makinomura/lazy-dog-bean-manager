@@ -16,5 +16,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Conf {
-	String value();
+	String DEFAULT_NONE = "\n\t\t\n\t\t\n\uE000\uE001\uE002\n\t\t\t\t\n";
+
+	String key();
+
+	String defaultValue() default DEFAULT_NONE;
 }

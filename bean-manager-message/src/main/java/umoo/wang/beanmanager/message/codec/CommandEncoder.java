@@ -1,8 +1,10 @@
 package umoo.wang.beanmanager.message.codec;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.serializer.CommandSerializer;
 
@@ -11,6 +13,8 @@ import java.util.List;
 /**
  * Created by yuanchen on 2019/01/11. Command消息编码器
  */
+@Bean
+@ChannelHandler.Sharable
 public class CommandEncoder extends MessageToMessageEncoder<Command> {
 
 	private CommandSerializer serializer = CommandSerializer.load();

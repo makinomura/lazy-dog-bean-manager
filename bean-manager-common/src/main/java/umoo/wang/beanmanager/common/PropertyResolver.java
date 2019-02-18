@@ -2,7 +2,6 @@ package umoo.wang.beanmanager.common;
 
 import umoo.wang.beanmanager.common.converter.ConverterFactory;
 import umoo.wang.beanmanager.common.exception.ManagerException;
-import umoo.wang.beanmanager.common.util.StringUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,12 +39,7 @@ public class PropertyResolver {
 	 * @return
 	 */
 	public static String read(String key) {
-		String value = properties.getProperty(key);
-
-		if (StringUtil.isNullOrEmpty(value)) {
-			throw new ManagerException("Property: " + key + " is not present.");
-		}
-		return value;
+		return properties.getProperty(key);
 	}
 
 	/**
@@ -57,7 +51,12 @@ public class PropertyResolver {
 	 * @return
 	 */
 	public static <T> T read(String key, Class<T> requireType) {
-		return ConverterFactory.withType(requireType).convert(read(key),
+		String value = read(key);
+		if (value == null) {
+			return null;
+		}
+
+		return ConverterFactory.withType(requireType).convert(value,
 				requireType);
 	}
 }

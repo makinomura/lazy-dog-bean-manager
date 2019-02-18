@@ -1,8 +1,12 @@
 package umoo.wang.beanmanager.message.reply;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
+import umoo.wang.beanmanager.common.beanfactory.Conf;
+import umoo.wang.beanmanager.common.beanfactory.PostConstruct;
 import umoo.wang.beanmanager.message.Command;
 
 import java.util.HashSet;
@@ -16,21 +20,25 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by yuanchen on 2019/01/15. Replyable消息注册
  */
+@Bean
+@ChannelHandler.Sharable
 @SuppressWarnings("unchecked")
 public class ReplyRegister extends ChannelOutboundHandlerAdapter {
 
 	private final static int CLEAN_TASK_INTERVALS = 5000;
 
+	@Conf(key = "lazydog.message.ReplyRegister.replyExpireTime", defaultValue = "5000")
 	private Long replyExpireTime;// 消息过期时间
 	private ScheduledExecutorService executor;
 	private Map<String, ReplyableCommand<Boolean, Object>> commandMap;
 
-	public ReplyRegister(Integer maxThreads, Long replyExpireTime) {
-		this.replyExpireTime = replyExpireTime;
+	@PostConstruct
+	public void init() {
 		commandMap = new ConcurrentHashMap<>();
 
 		// 定时清理超时未得到响应的消息
-		executor = Executors.newScheduledThreadPool(maxThreads);
+		executor = Executors.newScheduledThreadPool(
+				Runtime.getRuntime().availableProcessors() * 2 + 1);
 		startCleanExpireReplyTask();
 	}
 

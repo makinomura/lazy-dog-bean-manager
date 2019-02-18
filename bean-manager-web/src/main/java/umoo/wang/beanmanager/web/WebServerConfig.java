@@ -13,8 +13,8 @@ import umoo.wang.beanmanager.common.beanfactory.Conf;
 @ToString
 public class WebServerConfig {
 
-	@Conf("lazydog.web.server.host")
+	@Conf(key = "lazydog.web.server.host")
 	private String host;
-	@Conf("lazydog.web.server.port")
+	@Conf(key = "lazydog.web.server.port")
 	private Integer port;
 }

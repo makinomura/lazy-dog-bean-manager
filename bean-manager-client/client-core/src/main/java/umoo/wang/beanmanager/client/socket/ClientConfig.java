@@ -9,13 +9,13 @@ import umoo.wang.beanmanager.common.beanfactory.Conf;
 @Bean
 public class ClientConfig {
 
-	@Conf("lazydog.server.host")
+	@Conf(key = "lazydog.server.host")
 	private String host;
-	@Conf("lazydog.server.port")
+	@Conf(key = "lazydog.server.port")
 	private Integer port;
-	@Conf("lazydog.app.name")
+	@Conf(key = "lazydog.app.name")
 	private String appName;
-	@Conf("lazydog.environment.name")
+	@Conf(key = "lazydog.environment.name")
 	private String environmentName;
 
 	public String getHost() {

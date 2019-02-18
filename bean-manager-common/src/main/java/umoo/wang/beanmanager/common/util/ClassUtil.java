@@ -34,17 +34,18 @@ public class ClassUtil {
 		try {
 			String packagePath = packageName.replace(CLASS_FILE_SEPARATOR,
 					CLASS_PATH_SEPARATOR);
-			URL url = classLoader.getResource(packagePath);
-
-			if (url == null) {
-				return result;
+			Enumeration<URL> resources = classLoader.getResources(packagePath);
+			while (resources.hasMoreElements()) {
+				URL url = resources.nextElement();
+				if (url == null) {
+					return result;
+				}
+				if (Objects.equals(url.getProtocol(), "file")) {
+					loadClassFile(classLoader, packageName, result, url);
+				} else if (Objects.equals(url.getProtocol(), "jar")) {
+					loadJarFile(classLoader, packageName, result, url);
+				}
 			}
-			if (Objects.equals(url.getProtocol(), "file")) {
-				loadClassFile(classLoader, packageName, result, url);
-			} else if (Objects.equals(url.getProtocol(), "jar")) {
-				loadJarFile(classLoader, packageName, result, url);
-			}
-
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 		}
