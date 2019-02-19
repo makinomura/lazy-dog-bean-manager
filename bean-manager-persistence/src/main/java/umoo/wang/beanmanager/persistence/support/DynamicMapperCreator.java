@@ -77,7 +77,7 @@ public class DynamicMapperCreator {
 			mappers.put(entityClazz, mapperClazz);
 			return mapperClazz;
 		} catch (InvocationTargetException | IllegalAccessException e) {
-			throw ServerException.wrap(e);
+			throw ManagerException.wrap(e);
 		}
 	}
 

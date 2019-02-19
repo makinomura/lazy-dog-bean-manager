@@ -23,8 +23,4 @@ public class ClientException extends ManagerException {
 			boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
-
-	public static ClientException wrap(Throwable throwable) {
-		return new ClientException(throwable);
-	}
 }
