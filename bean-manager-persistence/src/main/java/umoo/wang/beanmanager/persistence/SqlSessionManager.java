@@ -92,10 +92,18 @@ public class SqlSessionManager {
 
 			SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
 
+			PooledDataSource dataSource = new PooledDataSource(
+					config.getDriver(), config.getUrl(), config.getUsername(),
+					config.getPassword());
+
+			// 连接保活
+			dataSource.setPoolPingEnabled(true);
+			dataSource.setPoolPingQuery("SELECT 1");
+			dataSource.setPoolPingConnectionsNotUsedFor(60 * 60 * 1000);
+
 			Environment environment = new Environment(DEFAULT_ENVIRONMENT,
 					new JdbcTransactionFactory(),
-					new PooledDataSource(config.getDriver(), config.getUrl(),
-							config.getUsername(), config.getPassword()));
+					dataSource);
 
 			Configuration configuration = new Configuration(environment);
 			configuration.setLazyLoadingEnabled(true);
