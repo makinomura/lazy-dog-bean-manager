@@ -52,7 +52,7 @@ public class Client {
 	@Inject
 	private ReplyRegister replyRegister;
 	@Inject
-	private MainInHandler mainInHandler;
+	private ClientCommandProcessor clientCommandProcessor;
 
 	public static void start() {
 		beanFactory.getBean(Client.class).connect();
@@ -71,7 +71,7 @@ public class Client {
 						pipeline.addLast(replyInvoker);
 						pipeline.addLast(commandEncoder);
 						pipeline.addLast(replyRegister);
-						pipeline.addLast(mainInHandler);
+						pipeline.addLast(clientCommandProcessor);
 					}
 				});
 

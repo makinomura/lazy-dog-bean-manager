@@ -1,6 +1,8 @@
 package umoo.wang.beanmanager.web;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -23,7 +25,10 @@ import java.util.List;
  * Created by yuanchen on 2019/01/30.
  */
 @Bean
-public class CoreRequestProcessor implements RequestProcessor {
+@ChannelHandler.Sharable
+public class CoreRequestProcessor
+		extends SimpleChannelInboundHandler<FullHttpRequest>
+		implements RequestProcessor {
 
 	private final static Logger logger = LoggerFactory
 			.getLogger(CoreRequestProcessor.class);
@@ -68,6 +73,12 @@ public class CoreRequestProcessor implements RequestProcessor {
 			processed = processor404.process(ctx, request);
 		}
 		return processed;
+	}
+
+	@Override
+	protected void channelRead0(ChannelHandlerContext ctx,
+			FullHttpRequest request) throws Exception {
+		process(ctx, request);
 	}
 
 	private static class DefaultRequestProcessor

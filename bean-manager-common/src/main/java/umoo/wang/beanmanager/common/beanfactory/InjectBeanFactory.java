@@ -1,5 +1,7 @@
 package umoo.wang.beanmanager.common.beanfactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.PropertyResolver;
 import umoo.wang.beanmanager.common.converter.ConverterFactory;
 import umoo.wang.beanmanager.common.exception.ManagerException;
@@ -8,6 +10,7 @@ import umoo.wang.beanmanager.common.util.ClassUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -16,11 +19,17 @@ import java.util.stream.Stream;
  * Created by yuanchen on 2019/01/30. 支持依赖注入和初始化的BeanFactory
  */
 public class InjectBeanFactory implements BeanFactory {
+
+	private final static Logger logger = LoggerFactory
+			.getLogger(InjectBeanFactory.class);
+
 	private BeanFactory delegate;
 
 	public InjectBeanFactory(BeanFactory delegate, String... rootPackageNames) {
 		this.delegate = delegate;
 
+		logger.info("Scanning beans in package {}",
+				String.join(" , ", Arrays.asList(rootPackageNames)));
 		Stream.of(rootPackageNames).forEach(this::doScan);
 		doInject();
 	}

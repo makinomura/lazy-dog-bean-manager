@@ -46,7 +46,7 @@ public class Server {
 	@Inject
 	private ReplyRegister replyRegister;
 	@Inject
-	private MainInHandler mainInHandler;
+	private ServerCommandProcessor serverCommandProcessor;
 
 	public static void main(String[] args) {
 		beanFactory.getBean(Server.class).run();
@@ -65,7 +65,7 @@ public class Server {
 						pipeline.addLast(replyInvoker);
 						pipeline.addLast(commandEncoder);
 						pipeline.addLast(replyRegister);
-						pipeline.addLast(mainInHandler);
+						pipeline.addLast(serverCommandProcessor);
 					}
 				}).childOption(ChannelOption.SO_KEEPALIVE, true);
 
