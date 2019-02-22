@@ -102,8 +102,7 @@ public class SqlSessionManager {
 			dataSource.setPoolPingConnectionsNotUsedFor(60 * 60 * 1000);
 
 			Environment environment = new Environment(DEFAULT_ENVIRONMENT,
-					new JdbcTransactionFactory(),
-					dataSource);
+					new JdbcTransactionFactory(), dataSource);
 
 			Configuration configuration = new Configuration(environment);
 			configuration.setLazyLoadingEnabled(true);

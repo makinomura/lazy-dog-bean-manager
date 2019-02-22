@@ -37,6 +37,8 @@ public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 
 	@Inject
 	private BeanFactory beanFactory;
+	@Inject
+	private ClientManager clientManager;
 
 	@PostConstruct
 	private void init() {
@@ -78,7 +80,7 @@ public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		ClientManager.register(ctx);
+		clientManager.register(ctx);
 		channels.add(ctx.channel());
 	}
 
@@ -90,7 +92,7 @@ public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		ClientManager.unregister(ctx);
+		clientManager.unregister(ctx);
 		channels.remove(ctx.channel());
 	}
 
