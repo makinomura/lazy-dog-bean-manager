@@ -32,8 +32,7 @@ public interface BeanFactory {
 	 *            类
 	 * @param args
 	 *            构造函数参数
-	 * @param <T>
 	 * @return
 	 */
-	<T> T createBean(Class<T> clazz, Object... args);
+	Object createBean(Class<?> clazz, Object... args);
 }

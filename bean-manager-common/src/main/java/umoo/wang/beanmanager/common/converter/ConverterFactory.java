@@ -27,7 +27,7 @@ public class ConverterFactory implements BeanFactory {
 	 * @return
 	 */
 	public static <T extends Converter> Converter register(Class<T> clazz) {
-		return delegate.createBean(clazz);
+		return (Converter) delegate.createBean(clazz);
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class ConverterFactory implements BeanFactory {
 	}
 
 	@Override
-	public <T> T createBean(Class<T> clazz, Object... args) {
+	public Object createBean(Class<?> clazz, Object... args) {
 		if (!Converter.class.isAssignableFrom(clazz)) {
 			throw new ManagerException("Only support converters bean.");
 		}

@@ -10,6 +10,26 @@ public class ManagerException extends RuntimeException {
 		exceptionRoot = determineExceptionRoot();
 	}
 
+	public ManagerException() {
+	}
+
+	public ManagerException(String message) {
+		super(message);
+	}
+
+	public ManagerException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public ManagerException(Throwable cause) {
+		super(cause);
+	}
+
+	public ManagerException(String message, Throwable cause,
+			boolean enableSuppression, boolean writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
+	}
+
 	private static Class<? extends ManagerException> determineExceptionRoot() {
 		try {
 			Class.forName("umoo.wang.beanmanager.client.socket.Client");
@@ -30,26 +50,6 @@ public class ManagerException extends RuntimeException {
 		}
 
 		return ManagerException.class;
-	}
-
-	public ManagerException() {
-	}
-
-	public ManagerException(String message) {
-		super(message);
-	}
-
-	public ManagerException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public ManagerException(Throwable cause) {
-		super(cause);
-	}
-
-	public ManagerException(String message, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
 	public static ManagerException wrap(Throwable throwable) {
