@@ -83,9 +83,9 @@ public class InjectBeanFactory implements BeanFactory {
 						e.printStackTrace();
 					}
 				} else if (inject.required() && errorIfAbsent) {
-					throw new ManagerException(
+					throw ManagerException.wrap(new RuntimeException(
 							"Required inject field not exists. type: "
-									+ requireType.getName());
+									+ requireType.getName()));
 				}
 			}
 		}
@@ -99,8 +99,8 @@ public class InjectBeanFactory implements BeanFactory {
 
 			if (method.getAnnotation(PostConstruct.class) != null) {
 				if (method.getParameterCount() > 0) {
-					throw new ManagerException(
-							"PostConstruct method should require 0 parameters.");
+					throw ManagerException.wrap(new RuntimeException(
+							"PostConstruct method should require 0 parameters."));
 				}
 
 				try {
@@ -174,8 +174,8 @@ public class InjectBeanFactory implements BeanFactory {
 							});
 
 					if (parameters[i] == null) {
-						throw new ManagerException(
-								"@Inject or @Conf required for @Bean method parameters");
+						throw ManagerException.wrap(new RuntimeException(
+								"@Inject or @Conf required for @Bean method parameters"));
 					}
 				}
 

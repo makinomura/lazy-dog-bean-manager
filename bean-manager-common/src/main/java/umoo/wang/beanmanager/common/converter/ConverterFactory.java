@@ -44,8 +44,8 @@ public class ConverterFactory implements BeanFactory {
 			return (Converter) converters.get(0);
 		}
 
-		throw new ManagerException(
-				"No converters found for type: " + requireType.getName());
+		throw ManagerException.wrap(new RuntimeException(
+				"No converters found for type: " + requireType.getName()));
 	}
 
 	@Override
@@ -61,7 +61,8 @@ public class ConverterFactory implements BeanFactory {
 	@Override
 	public Object createBean(Class<?> clazz, Object... args) {
 		if (!Converter.class.isAssignableFrom(clazz)) {
-			throw new ManagerException("Only support converters bean.");
+			throw ManagerException.wrap(
+					new RuntimeException("Only support converters bean."));
 		}
 
 		return delegate.createBean(clazz, args);

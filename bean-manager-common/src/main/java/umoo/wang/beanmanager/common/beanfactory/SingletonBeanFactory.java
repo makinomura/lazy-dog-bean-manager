@@ -72,11 +72,12 @@ public class SingletonBeanFactory implements BeanFactory {
 				obj = constructor.newInstance(args);
 			} catch (IllegalAccessException | InstantiationException
 					| InvocationTargetException e) {
-				throw new ManagerException("Create bean failed!", e);
+				throw ManagerException.wrap(e);
 			}
 		}
 		if (obj == null) {
-			throw new ManagerException("No such constructors found!");
+			throw ManagerException
+					.wrap(new RuntimeException("No such constructors found!"));
 		}
 
 		if (obj instanceof FactoryBean) {
