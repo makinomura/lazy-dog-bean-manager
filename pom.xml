@@ -15,6 +15,7 @@
         <module>bean-manager-message</module>
         <module>bean-manager-common</module>
         <module>bean-manager-persistence</module>
+        <module>bean-manager-cache</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
@@ -29,6 +30,7 @@
         <mybatis.version>3.4.6</mybatis.version>
         <persistence-api.version>1.0.2</persistence-api.version>
         <cglib.version>3.2.10</cglib.version>
+        <jedis.version>3.0.1</jedis.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -59,6 +61,12 @@
             <dependency>
                 <groupId>umoo.wang.lazydog</groupId>
                 <artifactId>bean-manager-persistence</artifactId>
+                <version>${project.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>umoo.wang.lazydog</groupId>
+                <artifactId>bean-manager-cache</artifactId>
                 <version>${project.version}</version>
                 <scope>compile</scope>
             </dependency>
@@ -112,6 +120,11 @@
                 <groupId>cglib</groupId>
                 <artifactId>cglib</artifactId>
                 <version>${cglib.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
