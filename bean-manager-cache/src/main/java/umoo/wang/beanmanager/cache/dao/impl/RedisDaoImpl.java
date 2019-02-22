@@ -1,7 +1,7 @@
 package umoo.wang.beanmanager.cache.dao.impl;
 
 import com.alibaba.fastjson.JSON;
-import redis.clients.jedis.Jedis;
+import umoo.wang.beanmanager.cache.JedisExecutor;
 import umoo.wang.beanmanager.cache.RedisKey;
 import umoo.wang.beanmanager.cache.dao.RedisDao;
 import umoo.wang.beanmanager.cache.entity.ClientInfo;
@@ -18,23 +18,29 @@ import java.util.stream.Collectors;
 public class RedisDaoImpl implements RedisDao {
 
 	@Inject
-	private Jedis jedis;
+	private JedisExecutor jedisExecutor;
 
 	@Override
 	public List<ClientInfo> listClientInfo() {
-		return jedis.hgetAll(RedisKey.CLIENT_INFO_MAP).values().stream()
-				.map(bytes -> JSON.parseObject(bytes, ClientInfo.class))
-				.collect(Collectors.toList());
+		return jedisExecutor.execute(jedis -> {
+			return jedis.hgetAll(RedisKey.CLIENT_INFO_MAP).values().stream()
+					.map(bytes -> JSON.parseObject(bytes, ClientInfo.class))
+					.collect(Collectors.toList());
+		});
 	}
 
 	@Override
 	public Long addClientInfo(ClientInfo clientInfo) {
-		return jedis.hset(RedisKey.CLIENT_INFO_MAP, clientInfo.getChannelKey(),
-				JSON.toJSONString(clientInfo));
+		return jedisExecutor.execute(jedis -> {
+			return jedis.hset(RedisKey.CLIENT_INFO_MAP,
+					clientInfo.getChannelKey(), JSON.toJSONString(clientInfo));
+		});
 	}
 
 	@Override
 	public Long removeClientInfo(String key) {
-		return jedis.hdel(RedisKey.CLIENT_INFO_MAP, key);
+		return jedisExecutor.execute(jedis -> {
+			return jedis.hdel(RedisKey.CLIENT_INFO_MAP, key);
+		});
 	}
 }
