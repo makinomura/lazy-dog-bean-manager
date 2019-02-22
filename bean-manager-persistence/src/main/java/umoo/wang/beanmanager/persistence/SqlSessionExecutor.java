@@ -50,6 +50,11 @@ public class SqlSessionExecutor
 	}
 
 	@Override
+	public DelegateSqlSession getResource() {
+		return openSession();
+	}
+
+	@Override
 	public void execute(Consumer<DelegateSqlSession> consumer) {
 		execute(false, consumer);
 	}
