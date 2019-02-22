@@ -62,7 +62,7 @@ public class SingletonBeanFactory implements BeanFactory {
 	}
 
 	@Override
-	public <T> T createBean(Class<T> clazz, Object... args) {
+	public Object createBean(Class<?> clazz, Object... args) {
 		Object obj = null;
 
 		// 使用构造函数创建Bean
@@ -72,16 +72,20 @@ public class SingletonBeanFactory implements BeanFactory {
 				obj = constructor.newInstance(args);
 			} catch (IllegalAccessException | InstantiationException
 					| InvocationTargetException e) {
-				throw new ManagerException("Create bean failed!", e);
+				throw ManagerException.wrap(e);
 			}
 		}
 		if (obj == null) {
-			throw new ManagerException("No such constructors found!");
+			throw ManagerException
+					.wrap(new RuntimeException("No such constructors found!"));
 		}
 
-		beans.put(clazz, obj);
+		if (obj instanceof FactoryBean) {
+			obj = ((FactoryBean) obj).getBean();
+		}
 
-		return (T) obj;
+		beans.put(obj.getClass(), obj);
+		return obj;
 	}
 
 	private Class<?> getWrapper(Class<?> primitiveClazz) {

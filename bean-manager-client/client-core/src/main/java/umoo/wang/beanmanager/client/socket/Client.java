@@ -17,7 +17,7 @@ import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.common.beanfactory.InjectBeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
-import umoo.wang.beanmanager.common.exception.ClientException;
+import umoo.wang.beanmanager.common.exception.ManagerException;
 import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
@@ -115,7 +115,7 @@ public class Client {
 				heartBeatTask.shutdown();
 			}
 			workerGroup.shutdownGracefully();
-			throw ClientException.wrap(e);
+			throw ManagerException.wrap(e);
 		}
 	}
 

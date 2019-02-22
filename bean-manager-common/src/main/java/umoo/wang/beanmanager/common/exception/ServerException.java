@@ -23,8 +23,4 @@ public class ServerException extends ManagerException {
 			boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
-
-	public static ServerException wrap(Throwable throwable) {
-		return new ServerException(throwable);
-	}
 }

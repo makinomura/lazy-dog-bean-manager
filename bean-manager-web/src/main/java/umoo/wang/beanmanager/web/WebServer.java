@@ -26,7 +26,7 @@ import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
  */
 @Bean
 public class WebServer {
-	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager.web";
+	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager";
 	public final static BeanFactory beanFactory = new InjectBeanFactory(
 			new SingletonBeanFactory(), ROOT_PACKAGE_NAME);
 	private final static EventLoopGroup bossGroup = new NioEventLoopGroup(

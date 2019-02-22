@@ -7,6 +7,7 @@ import umoo.wang.beanmanager.common.converter.ConverterFactory;
 import umoo.wang.beanmanager.common.exception.ManagerException;
 import umoo.wang.beanmanager.common.util.ClassUtil;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,8 +31,18 @@ public class InjectBeanFactory implements BeanFactory {
 
 		logger.info("Scanning beans in package {}",
 				String.join(" , ", Arrays.asList(rootPackageNames)));
+		// @Bean类
 		Stream.of(rootPackageNames).forEach(this::doScan);
-		doInject();
+		delegate.getBean((bean) -> true).forEach(this::doInjectConf);
+		delegate.getBean((bean) -> true)
+				.forEach(bean -> doInjectBean(bean, false));
+
+		// 扫描@Bean方法
+		delegate.getBean((bean) -> true).forEach(this::createBeanFromMethod);
+		delegate.getBean((bean) -> true)
+				.forEach(bean -> doInjectBean(bean, true));
+
+		delegate.getBean((bean) -> true).forEach(this::doPostConstruct);
 	}
 
 	@Override
@@ -45,11 +56,16 @@ public class InjectBeanFactory implements BeanFactory {
 	}
 
 	@Override
-	public <T> T createBean(Class<T> clazz, Object... args) {
-		return delegate.createBean(clazz, args);
+	public Object createBean(Class<?> clazz, Object... args) {
+		Object bean = delegate.createBean(clazz, args);
+
+		doInjectConf(bean);
+		doInjectBean(bean, true);
+		doPostConstruct(bean);
+		return bean;
 	}
 
-	private void doInjectBean(Object bean) {
+	private void doInjectBean(Object bean, boolean errorIfAbsent) {
 		Field[] declaredFields = bean.getClass().getDeclaredFields();
 
 		for (Field field : declaredFields) {
@@ -66,9 +82,10 @@ public class InjectBeanFactory implements BeanFactory {
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					}
-				} else if (inject.required()) {
-					throw new ManagerException(
-							"Required inject field not exists.");
+				} else if (inject.required() && errorIfAbsent) {
+					throw ManagerException.wrap(new RuntimeException(
+							"Required inject field not exists. type: "
+									+ requireType.getName()));
 				}
 			}
 		}
@@ -82,8 +99,8 @@ public class InjectBeanFactory implements BeanFactory {
 
 			if (method.getAnnotation(PostConstruct.class) != null) {
 				if (method.getParameterCount() > 0) {
-					throw new ManagerException(
-							"PostConstruct method should require 0 parameters.");
+					throw ManagerException.wrap(new RuntimeException(
+							"PostConstruct method should require 0 parameters."));
 				}
 
 				try {
@@ -125,11 +142,47 @@ public class InjectBeanFactory implements BeanFactory {
 		}
 	}
 
-	private void doInject() {
-		List<Object> beans = delegate.getBean((bean) -> true);
-		beans.forEach(this::doInjectBean);
-		beans.forEach(this::doInjectConf);
-		beans.forEach(this::doPostConstruct);
+	private void createBeanFromMethod(Object bean) {
+		for (Method method : bean.getClass().getDeclaredMethods()) {
+			if (method.isAnnotationPresent(Bean.class)) {
+				Object[] parameters = new Object[method.getParameterCount()];
+
+				Class<?>[] parameterTypes = method.getParameterTypes();
+				for (int i = 0; i < parameterTypes.length; i++) {
+					Class<?> parameterType = parameterTypes[i];
+					Annotation[] parameterAnnotation = method
+							.getParameterAnnotations()[i];
+
+					int finalI = i;
+					Stream.of(parameterAnnotation)
+							.filter(annotation -> annotation instanceof Inject)
+							.findAny().ifPresent(annotation -> {
+								parameters[finalI] = delegate
+										.getBean(parameterType);
+							});
+
+					if (parameters[i] != null) {
+						continue;
+					}
+
+					Stream.of(parameterAnnotation)
+							.filter(annotation -> annotation instanceof Conf)
+							.findAny().ifPresent(annotation -> {
+								Conf annotationConf = (Conf) annotation;
+								parameters[finalI] = PropertyResolver.read(
+										annotationConf.key(), parameterType);
+							});
+
+					if (parameters[i] == null) {
+						throw ManagerException.wrap(new RuntimeException(
+								"@Inject or @Conf required for @Bean method parameters"));
+					}
+				}
+
+				delegate.createBean(MethodFactoryBean.class, bean, method,
+						parameters);
+			}
+		}
 	}
 
 	private void doScan(String rootPackageName) {
@@ -137,6 +190,30 @@ public class InjectBeanFactory implements BeanFactory {
 				.scan(Thread.currentThread().getContextClassLoader(),
 						rootPackageName)
 				.stream().filter(clazz -> clazz.isAnnotationPresent(Bean.class))
-				.forEach(clazz -> createBean(clazz));
+				.forEach(clazz -> delegate.createBean(clazz));
+	}
+
+	static class MethodFactoryBean implements FactoryBean {
+
+		private Object obj;
+		private Method method;
+		private Object[] parameters;
+
+		public MethodFactoryBean(Object obj, Method method,
+				Object[] parameters) {
+			this.obj = obj;
+			this.method = method;
+			this.parameters = parameters;
+		}
+
+		@Override
+		public Object getBean() {
+			try {
+				return method.invoke(obj, parameters);
+			} catch (IllegalAccessException | InvocationTargetException e) {
+				e.printStackTrace();
+				throw ManagerException.wrap(e);
+			}
+		}
 	}
 }

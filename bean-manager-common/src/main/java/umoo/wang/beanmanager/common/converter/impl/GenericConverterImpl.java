@@ -42,8 +42,8 @@ public class GenericConverterImpl implements Converter {
 			}
 		}
 
-		throw new ManagerException("Cannot covert '" + "' into type '"
-				+ requireType.getName() + "'!");
+		throw ManagerException.wrap(new RuntimeException("Cannot covert '"
+				+ "' into type '" + requireType.getName() + "'!"));
 	}
 
 	@Override

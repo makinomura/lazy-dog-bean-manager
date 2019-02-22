@@ -2,6 +2,10 @@ package umoo.wang.beanmanager.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Data;
+import umoo.wang.beanmanager.cache.dao.RedisDao;
+import umoo.wang.beanmanager.cache.entity.ClientInfo;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
+import umoo.wang.beanmanager.common.beanfactory.Inject;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -10,8 +14,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by yuanchen on 2019/01/11. 保存Client的Channel实体，以便发送消息
  */
+@Bean
 public class ClientManager {
 	private static Map<String, ContextWrapper> contexts = new ConcurrentHashMap<>();
+
+	@Inject
+	private RedisDao redisDao;
 
 	/**
 	 * 构建key ip:port
@@ -19,7 +27,7 @@ public class ClientManager {
 	 * @param ctx
 	 * @return
 	 */
-	private static String buildContextKey(ChannelHandlerContext ctx) {
+	public static String buildContextKey(ChannelHandlerContext ctx) {
 		InetSocketAddress inetSocketAddress = (InetSocketAddress) ctx.channel()
 				.remoteAddress();
 
@@ -27,7 +35,7 @@ public class ClientManager {
 				+ inetSocketAddress.getPort();
 	}
 
-	public static void register(ChannelHandlerContext ctx) {
+	public void register(ChannelHandlerContext ctx) {
 		String name = buildContextKey(ctx);
 
 		ContextWrapper contextWrapper = new ContextWrapper(name, ctx,
@@ -35,22 +43,33 @@ public class ClientManager {
 		contexts.put(name, contextWrapper);
 	}
 
-	public static void unregister(ChannelHandlerContext ctx) {
-		contexts.remove(buildContextKey(ctx));
+	public void unregister(ChannelHandlerContext ctx) {
+		String key = buildContextKey(ctx);
+
+		contexts.remove(key);
+		redisDao.removeClientInfo(key);
 	}
 
-	public static void updateStatus(ChannelHandlerContext ctx, int status) {
+	public void updateStatus(ChannelHandlerContext ctx, int status) {
 
 		ContextWrapper context = getOrRegister(ctx);
 		context.setClientStatus(status);
+		ClientConfig clientConfig = context.getClientConfig();
 
+		if (status == ClientStatusEnum.REGISTERED.value()) {
+			redisDao.addClientInfo(ClientInfo.builder()
+					.channelKey(ClientManager.buildContextKey(ctx))
+					.appName(clientConfig.getAppName())
+					.environmentName(clientConfig.getEnvironmentName())
+					.build());
+		}
 	}
 
-	public static ClientConfig getConfig(ChannelHandlerContext ctx) {
+	public ClientConfig getConfig(ChannelHandlerContext ctx) {
 		return getOrRegister(ctx).clientConfig;
 	}
 
-	private static ContextWrapper getOrRegister(ChannelHandlerContext ctx) {
+	private ContextWrapper getOrRegister(ChannelHandlerContext ctx) {
 		String name = buildContextKey(ctx);
 
 		ContextWrapper contextWrapper = contexts.get(name);
@@ -100,7 +119,7 @@ public class ClientManager {
 	@Data
 	public static class ClientConfig {
 		private String appName;
-		private String environment;
+		private String environmentName;
 	}
 
 }
