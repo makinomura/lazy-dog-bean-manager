@@ -9,6 +9,9 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umoo.wang.beanmanager.common.ResourceExecutor;
+import umoo.wang.beanmanager.common.beanfactory.Bean;
+import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.common.exception.ManagerException;
 import umoo.wang.beanmanager.persistence.support.DynamicMapperCreator;
 import umoo.wang.beanmanager.persistence.support.InsertKeyInterceptor;
@@ -19,33 +22,39 @@ import java.util.function.Function;
 /**
  * Created by yuanchen on 2019/01/20.
  */
-public class SqlSessionManager {
+@Bean
+public class SqlSessionExecutor
+		implements ResourceExecutor<DelegateSqlSession> {
 	private final static String DEFAULT_ENVIRONMENT = "default";
 	private final static Logger logger = LoggerFactory
-			.getLogger(SqlSessionManager.class);
-	private static SqlSessionFactory sqlSessionFactory;
-	private static DynamicMapperCreator mapperCreator = new DynamicMapperCreator();
+			.getLogger(SqlSessionExecutor.class);
 
-	static {
-		buildSqlSessionFactory();
-	}
+	@Inject
+	private SqlSessionFactory sqlSessionFactory;
 
-	public static DelegateSqlSession openSession() {
+	@Inject
+	private DynamicMapperCreator mapperCreator;
+
+	@Inject
+	private JdbcConfig jdbcConfig;
+
+	public DelegateSqlSession openSession() {
 		return openSession(true, false);
 	}
 
-	public static DelegateSqlSession openSession(boolean autoCommit,
+	public DelegateSqlSession openSession(boolean autoCommit,
 			boolean readonly) {
 		SqlSession sqlSession = sqlSessionFactory.openSession(autoCommit);
 		return readonly ? new ReadonlySqlSession(sqlSession, mapperCreator)
 				: new DelegateSqlSession(sqlSession, mapperCreator);
 	}
 
-	public static void execute(Consumer<DelegateSqlSession> consumer) {
+	@Override
+	public void execute(Consumer<DelegateSqlSession> consumer) {
 		execute(false, consumer);
 	}
 
-	public static void execute(boolean readonly,
+	public void execute(boolean readonly,
 			Consumer<DelegateSqlSession> consumer) {
 		execute(readonly, sqlSession -> {
 			consumer.accept(sqlSession);
@@ -53,11 +62,12 @@ public class SqlSessionManager {
 		});
 	}
 
-	public static <T> T execute(Function<DelegateSqlSession, T> function) {
+	@Override
+	public <T> T execute(Function<DelegateSqlSession, T> function) {
 		return execute(false, function);
 	}
 
-	public static <T> T execute(boolean readonly,
+	public <T> T execute(boolean readonly,
 			Function<DelegateSqlSession, T> function) {
 		DelegateSqlSession sqlSession = null;
 		Exception e = null;
@@ -83,18 +93,16 @@ public class SqlSessionManager {
 		throw ManagerException.wrap(e);
 	}
 
-	private static void buildSqlSessionFactory() {
-
-		JdbcConfig config = JdbcConfig.read();
-
+	@Bean
+	public SqlSessionFactory sqlSessionFactory(@Inject JdbcConfig jdbcConfig) {
 		try {
-			Class.forName(config.getDriver());
+			Class.forName(jdbcConfig.getDriver());
 
 			SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
 
 			PooledDataSource dataSource = new PooledDataSource(
-					config.getDriver(), config.getUrl(), config.getUsername(),
-					config.getPassword());
+					jdbcConfig.getDriver(), jdbcConfig.getUrl(),
+					jdbcConfig.getUsername(), jdbcConfig.getPassword());
 
 			// 连接保活
 			dataSource.setPoolPingEnabled(true);
@@ -110,10 +118,15 @@ public class SqlSessionManager {
 			configuration.addInterceptor(new InsertKeyInterceptor());
 			configuration.setUseGeneratedKeys(true);
 
-			sqlSessionFactory = sqlSessionFactoryBuilder.build(configuration);
+			return sqlSessionFactoryBuilder.build(configuration);
 		} catch (ClassNotFoundException e) {
 			logger.error("Connection establish failed!", e);
 			throw ManagerException.wrap(e);
 		}
+	}
+
+	@Bean
+	public DynamicMapperCreator dynamicMapperCreator() {
+		return new DynamicMapperCreator();
 	}
 }

@@ -10,7 +10,7 @@ import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
 import umoo.wang.beanmanager.message.server.message.ServerRegisterMessage;
-import umoo.wang.beanmanager.persistence.SqlSessionManager;
+import umoo.wang.beanmanager.persistence.SqlSessionExecutor;
 import umoo.wang.beanmanager.persistence.entity.App;
 import umoo.wang.beanmanager.persistence.support.Mapper;
 import umoo.wang.beanmanager.server.ClientManager;
@@ -31,6 +31,8 @@ public class ServerRegisterCommandProcessor implements CommandProcessor {
 	private RedisDao redisDao;
 	@Inject
 	private ClientManager clientManager;
+	@Inject
+	private SqlSessionExecutor sqlSessionExecutor;
 
 	@Override
 	public boolean process(ChannelHandlerContext ctx, Command<?> command) {
@@ -40,7 +42,7 @@ public class ServerRegisterCommandProcessor implements CommandProcessor {
 			ServerRegisterMessage msg = (ServerRegisterMessage) command
 					.getCommandObj();
 
-			List<App> appList = SqlSessionManager.execute(true,
+			List<App> appList = sqlSessionExecutor.execute(true,
 					delegateSqlSession -> {
 						Mapper<Integer, App> appMapper = delegateSqlSession
 								.getMapperWithEntityClazz(App.class);
