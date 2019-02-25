@@ -38,7 +38,7 @@ public class ConverterFactory implements BeanFactory {
 	 */
 	public static Converter withType(Class<?> requireType) {
 		List<Object> converters = delegate
-				.getBean(obj -> ((Converter) obj).support(requireType));
+				.listBean(obj -> ((Converter) obj).support(requireType));
 
 		if (!converters.isEmpty()) {
 			return (Converter) converters.get(0);
@@ -54,8 +54,8 @@ public class ConverterFactory implements BeanFactory {
 	}
 
 	@Override
-	public List<Object> getBean(Predicate<Object> predicate) {
-		return delegate.getBean(predicate);
+	public List<Object> listBean(Predicate<Object> predicate) {
+		return delegate.listBean(predicate);
 	}
 
 	@Override

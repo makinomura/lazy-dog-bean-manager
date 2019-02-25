@@ -47,7 +47,7 @@ public class CoreRequestProcessor
 	private void init() {
 		processors.add(staticResourceRequestProcessor);
 		beanFactory
-				.getBean((bean) -> bean.getClass().getName()
+				.listBean((bean) -> bean.getClass().getName()
 						.endsWith("Controller"))
 				.stream().map(ControllerAdaptor::new).forEach(processors::add);
 	}

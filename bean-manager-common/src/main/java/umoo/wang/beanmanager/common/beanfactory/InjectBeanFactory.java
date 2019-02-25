@@ -33,16 +33,16 @@ public class InjectBeanFactory implements BeanFactory {
 				String.join(" , ", Arrays.asList(rootPackageNames)));
 		// @Bean类
 		Stream.of(rootPackageNames).forEach(this::doScan);
-		delegate.getBean((bean) -> true).forEach(this::doInjectConf);
-		delegate.getBean((bean) -> true)
+		delegate.listBean((bean) -> true).forEach(this::doInjectConf);
+		delegate.listBean((bean) -> true)
 				.forEach(bean -> doInjectBean(bean, false));
 
 		// 扫描@Bean方法
-		delegate.getBean((bean) -> true).forEach(this::createBeanFromMethod);
-		delegate.getBean((bean) -> true)
+		delegate.listBean((bean) -> true).forEach(this::createBeanFromMethod);
+		delegate.listBean((bean) -> true)
 				.forEach(bean -> doInjectBean(bean, true));
 
-		delegate.getBean((bean) -> true).forEach(this::doPostConstruct);
+		delegate.listBean((bean) -> true).forEach(this::doPostConstruct);
 	}
 
 	@Override
@@ -51,8 +51,8 @@ public class InjectBeanFactory implements BeanFactory {
 	}
 
 	@Override
-	public List<Object> getBean(Predicate<Object> predicate) {
-		return delegate.getBean(predicate);
+	public List<Object> listBean(Predicate<Object> predicate) {
+		return delegate.listBean(predicate);
 	}
 
 	@Override

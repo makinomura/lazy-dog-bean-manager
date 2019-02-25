@@ -23,7 +23,7 @@ public interface BeanFactory {
 	 * @param predicate
 	 * @return
 	 */
-	List<Object> getBean(Predicate<Object> predicate);
+	List<Object> listBean(Predicate<Object> predicate);
 
 	/**
 	 * 创建新的Bean并放入工厂

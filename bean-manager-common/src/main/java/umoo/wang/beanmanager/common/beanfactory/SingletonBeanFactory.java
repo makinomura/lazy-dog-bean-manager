@@ -56,7 +56,7 @@ public class SingletonBeanFactory implements BeanFactory {
 	}
 
 	@Override
-	public List<Object> getBean(Predicate<Object> predicate) {
+	public List<Object> listBean(Predicate<Object> predicate) {
 		return beans.values().stream().filter(predicate)
 				.collect(Collectors.toList());
 	}

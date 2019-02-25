@@ -43,7 +43,7 @@ public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 	@PostConstruct
 	private void init() {
 		beanFactory
-				.getBean((bean) -> CommandProcessor.class
+				.listBean((bean) -> CommandProcessor.class
 						.isAssignableFrom(bean.getClass())
 						&& bean.getClass() != ServerCommandProcessor.class)
 				.stream().map(bean -> (CommandProcessor) bean)
