@@ -9,9 +9,7 @@ import umoo.wang.beanmanager.common.beanfactory.Conf;
 import umoo.wang.beanmanager.common.beanfactory.PostConstruct;
 import umoo.wang.beanmanager.message.Command;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -76,16 +74,19 @@ public class ReplyRegister extends ChannelOutboundHandlerAdapter {
 	private void startCleanExpireReplyTask() {
 		executor.scheduleWithFixedDelay(() -> {
 			long now = System.currentTimeMillis();
-			Set<String> expireKeys = new HashSet<>();
 
-			commandMap.forEach((commandId, command) -> {
+			commandMap.entrySet().removeIf(entry -> {
+				ReplyableCommand<Boolean, Object> command = entry.getValue();
 				if (now - command.getCommand()
 						.getTimestamps() > replyExpireTime) {
-					expireKeys.add(commandId);
-				}
-			});
+					executor.submit(() -> {
+						command.getCallback().accept(false, null);
+					});
 
-			expireKeys.forEach(commandMap::remove);
+					return true;
+				}
+				return false;
+			});
 		}, 0, CLEAN_TASK_INTERVALS, TimeUnit.MILLISECONDS);
 	}
 }
