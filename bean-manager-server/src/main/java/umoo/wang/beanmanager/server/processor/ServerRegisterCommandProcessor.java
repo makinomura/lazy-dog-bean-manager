@@ -10,9 +10,8 @@ import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
 import umoo.wang.beanmanager.message.server.message.ServerRegisterMessage;
-import umoo.wang.beanmanager.persistence.SqlSessionExecutor;
+import umoo.wang.beanmanager.persistence.dao.MysqlDao;
 import umoo.wang.beanmanager.persistence.entity.App;
-import umoo.wang.beanmanager.persistence.support.Mapper;
 import umoo.wang.beanmanager.server.ClientManager;
 import umoo.wang.beanmanager.server.ClientStatusEnum;
 
@@ -32,7 +31,7 @@ public class ServerRegisterCommandProcessor implements CommandProcessor {
 	@Inject
 	private ClientManager clientManager;
 	@Inject
-	private SqlSessionExecutor sqlSessionExecutor;
+	private MysqlDao mysqlDao;
 
 	@Override
 	public boolean process(ChannelHandlerContext ctx, Command<?> command) {
@@ -42,13 +41,7 @@ public class ServerRegisterCommandProcessor implements CommandProcessor {
 			ServerRegisterMessage msg = (ServerRegisterMessage) command
 					.getCommandObj();
 
-			List<App> appList = sqlSessionExecutor.execute(true,
-					delegateSqlSession -> {
-						Mapper<Integer, App> appMapper = delegateSqlSession
-								.getMapperWithEntityClazz(App.class);
-
-						return appMapper.listAll();
-					});
+			List<App> appList = mysqlDao.listApp();
 
 			appList.stream().filter(
 					app -> Objects.equals(app.getAppName(), msg.getAppName()))
