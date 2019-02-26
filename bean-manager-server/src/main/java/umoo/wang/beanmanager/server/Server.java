@@ -9,8 +9,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
@@ -24,6 +23,7 @@ import umoo.wang.beanmanager.message.reply.ReplyRegister;
 /**
  * Created by yuanchen on 2019/01/11. Server负责与Client通讯
  */
+@Slf4j
 @Bean
 public class Server {
 	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager";
@@ -33,7 +33,6 @@ public class Server {
 			Runtime.getRuntime().availableProcessors() * 2);
 	private final static EventLoopGroup workerGroup = new NioEventLoopGroup(
 			100);
-	private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
 	@Inject
 	private ServerConfig config;
@@ -72,7 +71,7 @@ public class Server {
 		try {
 			ChannelFuture f = bootstrap.bind(config.getHost(),
 					config.getPort());
-			logger.info("Server start...");
+			log.info("Server start...");
 			f.sync();
 		} catch (InterruptedException e) {
 			// 出错关闭bossGroup和workerGroup

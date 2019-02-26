@@ -1,8 +1,7 @@
 package umoo.wang.beanmanager.server.processor;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
@@ -16,10 +15,9 @@ import java.util.UUID;
 /**
  * Created by yuanchen on 2019/01/23.
  */
+@Slf4j
 @Bean
 public class ServerHeartBeatCommandProcessor implements CommandProcessor {
-	private final static Logger logger = LoggerFactory
-			.getLogger(ServerHeartBeatCommandProcessor.class);
 
 	@Override
 	public boolean process(ChannelHandlerContext ctx, Command<?> command) {
@@ -28,7 +26,7 @@ public class ServerHeartBeatCommandProcessor implements CommandProcessor {
 			long timestamp = ((ServerHeartBeatMessage) (command)
 					.getCommandObj()).getTimestamp();
 
-			logger.info("Receive heart-beat package from " + ctx.name()
+			log.info("Receive heart-beat package from " + ctx.name()
 					+ " ,duration :" + (System.currentTimeMillis() - timestamp)
 					+ "ms");
 

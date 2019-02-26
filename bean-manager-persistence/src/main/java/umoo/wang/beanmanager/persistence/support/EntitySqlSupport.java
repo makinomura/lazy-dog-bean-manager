@@ -1,7 +1,6 @@
 package umoo.wang.beanmanager.persistence.support;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -21,10 +20,8 @@ import java.util.stream.Stream;
 /**
  * Created by Mekki on 2018/3/21. 实体->SQL工具类
  */
+@Slf4j
 public class EntitySqlSupport<T> {
-
-	private static Logger logger = LoggerFactory
-			.getLogger(EntitySqlSupport.class);
 
 	/**
 	 * SQL类缓存
@@ -54,7 +51,7 @@ public class EntitySqlSupport<T> {
 		resolvePk();
 		resolveColumns();
 		resolveSelectSql();
-		logger.info("built {}", clazz.getName());
+		log.info("built {}", clazz.getName());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -412,7 +409,7 @@ public class EntitySqlSupport<T> {
 			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(source);
 		}
 
-		logger.warn("unchecked convert for {}", source.toString());
+		log.warn("unchecked convert for {}", source.toString());
 
 		return source.toString();
 

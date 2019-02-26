@@ -1,8 +1,7 @@
 package umoo.wang.beanmanager.server.processor;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import umoo.wang.beanmanager.cache.dao.RedisDao;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
@@ -21,10 +20,9 @@ import java.util.Objects;
 /**
  * Created by yuanchen on 2019/01/23.
  */
+@Slf4j
 @Bean
 public class ServerRegisterCommandProcessor implements CommandProcessor {
-	private final static Logger logger = LoggerFactory
-			.getLogger(ServerRegisterCommandProcessor.class);
 
 	@Inject
 	private RedisDao redisDao;
@@ -46,7 +44,7 @@ public class ServerRegisterCommandProcessor implements CommandProcessor {
 			appList.stream().filter(
 					app -> Objects.equals(app.getAppName(), msg.getAppName()))
 					.findAny().ifPresent(app -> {
-						logger.info(
+						log.info(
 								"Client register:" + command.getCommandObj());
 
 						// 设置Client信息

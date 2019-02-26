@@ -1,5 +1,6 @@
 package umoo.wang.beanmanager.persistence;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -7,8 +8,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.common.ResourceExecutor;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
@@ -22,12 +21,11 @@ import java.util.function.Function;
 /**
  * Created by yuanchen on 2019/01/20.
  */
+@Slf4j
 @Bean
 public class SqlSessionExecutor
 		implements ResourceExecutor<DelegateSqlSession> {
 	private final static String DEFAULT_ENVIRONMENT = "default";
-	private final static Logger logger = LoggerFactory
-			.getLogger(SqlSessionExecutor.class);
 
 	@Inject
 	private SqlSessionFactory sqlSessionFactory;
@@ -125,7 +123,7 @@ public class SqlSessionExecutor
 
 			return sqlSessionFactoryBuilder.build(configuration);
 		} catch (ClassNotFoundException e) {
-			logger.error("Connection establish failed!", e);
+			log.error("Connection establish failed!", e);
 			throw ManagerException.wrap(e);
 		}
 	}

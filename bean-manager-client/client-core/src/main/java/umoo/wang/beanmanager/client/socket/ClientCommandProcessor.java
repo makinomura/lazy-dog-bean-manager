@@ -3,8 +3,7 @@ package umoo.wang.beanmanager.client.socket;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import umoo.wang.beanmanager.client.BeanManager;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.util.EnumUtil;
@@ -19,13 +18,11 @@ import static umoo.wang.beanmanager.client.socket.Client.beanFactory;
 /**
  * Created by yuanchen on 2019/01/16. Client消息处理器，考虑到后期命令会增多，需要改成链式调用
  */
+@Slf4j
 @Bean
 @ChannelHandler.Sharable
 public class ClientCommandProcessor extends SimpleChannelInboundHandler<Command>
 		implements CommandProcessor {
-
-	private final static Logger logger = LoggerFactory
-			.getLogger(ClientCommandProcessor.class);
 
 	@Override
 	public boolean process(ChannelHandlerContext ctx, Command<?> command) {
@@ -63,12 +60,12 @@ public class ClientCommandProcessor extends SimpleChannelInboundHandler<Command>
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 			throws Exception {
-		logger.error(ctx.name(), cause);
+		log.error(ctx.name(), cause);
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		logger.warn("Channel inactive, schedule to connect...");
+		log.warn("Channel inactive, schedule to connect...");
 
 		// 断线后重连
 		ctx.channel().eventLoop().submit(() -> {
