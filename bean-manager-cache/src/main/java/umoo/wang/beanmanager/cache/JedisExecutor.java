@@ -26,6 +26,11 @@ public class JedisExecutor implements ResourceExecutor<Jedis> {
 	}
 
 	@Override
+	public Jedis getResource() {
+		return jedisPool.getResource();
+	}
+
+	@Override
 	public void execute(Consumer<Jedis> consumer) {
 		execute((jedis) -> {
 			consumer.accept(jedis);
@@ -35,7 +40,7 @@ public class JedisExecutor implements ResourceExecutor<Jedis> {
 
 	@Override
 	public <T> T execute(Function<Jedis, T> function) {
-		try (Jedis jedis = jedisPool.getResource()) {
+		try (Jedis jedis = getResource()) {
 			return function.apply(jedis);
 		}
 	}

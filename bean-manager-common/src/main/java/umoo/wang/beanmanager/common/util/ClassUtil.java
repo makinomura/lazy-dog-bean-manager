@@ -37,9 +37,7 @@ public class ClassUtil {
 			Enumeration<URL> resources = classLoader.getResources(packagePath);
 			while (resources.hasMoreElements()) {
 				URL url = resources.nextElement();
-				if (url == null) {
-					return result;
-				}
+
 				if (Objects.equals(url.getProtocol(), "file")) {
 					loadClassFile(classLoader, packageName, result, url);
 				} else if (Objects.equals(url.getProtocol(), "jar")) {
@@ -96,7 +94,8 @@ public class ClassUtil {
 			List<Class<?>> result, String fileName) {
 		if (fileName.endsWith(CLASS_FILE_SUFFIX)) {
 			try {
-				result.add(classLoader.loadClass(packageName + "." + fileName
+				result.add(classLoader.loadClass(
+						packageName + CLASS_FILE_SEPARATOR + fileName
 						.substring(0, fileName.indexOf(CLASS_FILE_SUFFIX))));
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();

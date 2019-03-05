@@ -36,7 +36,11 @@ public class HeartBeatTask {
 					new ServerHeartBeatMessage(System.currentTimeMillis()));
 			channel.writeAndFlush(new ReplyableCommand<>(cmd,
 					(Boolean success, Integer result) -> {
-						logger.info("Receive server response: " + result);
+						if (success) {
+							logger.info("Receive server response: " + result);
+						} else {
+							logger.info("Receive server response timeout");
+						}
 					}));
 		}, 1000L, heartBeatIntervals, TimeUnit.MILLISECONDS);
 	}

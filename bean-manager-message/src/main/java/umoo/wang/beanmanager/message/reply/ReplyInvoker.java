@@ -13,20 +13,19 @@ import umoo.wang.beanmanager.message.Command;
  */
 @Bean
 @ChannelHandler.Sharable
-public class ReplyInvoker extends SimpleChannelInboundHandler {
+public class ReplyInvoker extends SimpleChannelInboundHandler<Command> {
 
 	@Inject
 	private ReplyRegister register;
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, Object msg)
+	protected void channelRead0(ChannelHandlerContext ctx, Command command)
 			throws Exception {
-		Command command = (Command) msg;
 
 		if (!StringUtil.isNullOrEmpty(command.getReplyTo())) {
 			register.invokeCallback(command);
 		} else {
-			ctx.fireChannelRead(msg);
+			ctx.fireChannelRead(command);
 		}
 	}
 }
