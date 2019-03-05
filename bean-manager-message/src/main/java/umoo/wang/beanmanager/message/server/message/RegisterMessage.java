@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class ServerRegisterMessage {
+public class RegisterMessage {
 	private String appName;
 	private String environmentName;
 }

@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 @Data
 @AllArgsConstructor
-public class ClientFieldUpdateMessage implements Serializable {
+public class FieldUpdateMessage implements Serializable {
 	private String fieldName;
 	private String newValue;
 }

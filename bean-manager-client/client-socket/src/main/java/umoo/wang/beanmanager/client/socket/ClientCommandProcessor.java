@@ -10,7 +10,7 @@ import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.CommandTargetEnum;
 import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
-import umoo.wang.beanmanager.message.client.message.ClientFieldUpdateMessage;
+import umoo.wang.beanmanager.message.client.message.FieldUpdateMessage;
 
 import static umoo.wang.beanmanager.client.socket.Client.beanFactory;
 
@@ -39,7 +39,7 @@ public class ClientCommandProcessor extends SimpleChannelInboundHandler<Command>
 		case ACK:
 			break;
 		case UPDATE_FIELD:
-			ClientFieldUpdateMessage message = (ClientFieldUpdateMessage) command
+			FieldUpdateMessage message = (FieldUpdateMessage) command
 					.getCommandObj();
 			// BeanManager.update(message.getFieldName(),
 			// message.getNewValue());

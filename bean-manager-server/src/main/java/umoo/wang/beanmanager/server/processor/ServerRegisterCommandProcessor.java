@@ -8,7 +8,7 @@ import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
-import umoo.wang.beanmanager.message.server.message.ServerRegisterMessage;
+import umoo.wang.beanmanager.message.server.message.RegisterMessage;
 import umoo.wang.beanmanager.persistence.dao.MysqlDao;
 import umoo.wang.beanmanager.persistence.entity.App;
 import umoo.wang.beanmanager.server.ClientManager;
@@ -36,7 +36,7 @@ public class ServerRegisterCommandProcessor implements CommandProcessor {
 
 		if (command.getCommandType() == ServerCommandTypeEnum.REGISTER
 				.value()) {
-			ServerRegisterMessage msg = (ServerRegisterMessage) command
+			RegisterMessage msg = (RegisterMessage) command
 					.getCommandObj();
 
 			List<App> appList = mysqlDao.listApp();

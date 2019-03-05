@@ -3,8 +3,8 @@ package umoo.wang.beanmanager.client.socket;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import umoo.wang.beanmanager.message.reply.ReplyableCommand;
-import umoo.wang.beanmanager.message.server.command.ServerHeartBeatCommand;
-import umoo.wang.beanmanager.message.server.message.ServerHeartBeatMessage;
+import umoo.wang.beanmanager.message.server.command.HeartBeatCommand;
+import umoo.wang.beanmanager.message.server.message.HeartBeatMessage;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -30,8 +30,8 @@ public class HeartBeatTask {
 	public void start() {
 		log.info("Heart-beat task start...");
 		es.scheduleWithFixedDelay(() -> {
-			ServerHeartBeatCommand cmd = new ServerHeartBeatCommand(
-					new ServerHeartBeatMessage(System.currentTimeMillis()));
+			HeartBeatCommand cmd = new HeartBeatCommand(
+					new HeartBeatMessage(System.currentTimeMillis()));
 			channel.writeAndFlush(new ReplyableCommand<>(cmd,
 					(Boolean success, Integer result) -> {
 						if (success) {

@@ -8,7 +8,7 @@ import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.CommandTargetEnum;
 import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
-import umoo.wang.beanmanager.message.server.message.ServerHeartBeatMessage;
+import umoo.wang.beanmanager.message.server.message.HeartBeatMessage;
 
 import java.util.UUID;
 
@@ -23,7 +23,7 @@ public class ServerHeartBeatCommandProcessor implements CommandProcessor {
 	public boolean process(ChannelHandlerContext ctx, Command<?> command) {
 		if (command.getCommandType() == ServerCommandTypeEnum.HEART_BEAT
 				.value()) {
-			long timestamp = ((ServerHeartBeatMessage) (command)
+			long timestamp = ((HeartBeatMessage) (command)
 					.getCommandObj()).getTimestamp();
 
 			log.info("Receive heart-beat package from " + ctx.name()

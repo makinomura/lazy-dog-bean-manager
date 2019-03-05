@@ -21,8 +21,8 @@ import umoo.wang.beanmanager.message.codec.CommandDecoder;
 import umoo.wang.beanmanager.message.codec.CommandEncoder;
 import umoo.wang.beanmanager.message.reply.ReplyInvoker;
 import umoo.wang.beanmanager.message.reply.ReplyRegister;
-import umoo.wang.beanmanager.message.server.command.ServerRegisterCommand;
-import umoo.wang.beanmanager.message.server.message.ServerRegisterMessage;
+import umoo.wang.beanmanager.message.server.command.RegisterCommand;
+import umoo.wang.beanmanager.message.server.message.RegisterMessage;
 
 import java.util.concurrent.TimeUnit;
 
@@ -121,7 +121,7 @@ public class Client {
 	private void doRegister(Channel channel) {
 		channel.eventLoop().schedule(() -> {
 			channel.writeAndFlush(
-					new ServerRegisterCommand(new ServerRegisterMessage(
+					new RegisterCommand(new RegisterMessage(
 							config.getAppName(), config.getEnvironmentName())));
 		}, 1000L, TimeUnit.MILLISECONDS);
 	}

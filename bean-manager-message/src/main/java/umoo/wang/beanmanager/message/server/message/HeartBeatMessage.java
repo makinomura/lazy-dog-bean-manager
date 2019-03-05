@@ -8,6 +8,6 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class ServerHeartBeatMessage {
+public class HeartBeatMessage {
 	private long timestamp;
 }
