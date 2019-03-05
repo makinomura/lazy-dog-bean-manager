@@ -1,5 +1,6 @@
 package umoo.wang.beanmanager.client.socket;
 
+import lombok.Value;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.Conf;
 
@@ -7,6 +8,7 @@ import umoo.wang.beanmanager.common.beanfactory.Conf;
  * Created by yuanchen on 2019/01/23.
  */
 @Bean
+@Value
 public class ClientConfig {
 
 	@Conf(key = "lazydog.server.host")
@@ -17,27 +19,6 @@ public class ClientConfig {
 	private String appName;
 	@Conf(key = "lazydog.environment.name")
 	private String environmentName;
-
-	public String getHost() {
-		return host;
-	}
-
-	public Integer getPort() {
-		return port;
-	}
-
-	public String getAppName() {
-		return appName;
-	}
-
-	public String getEnvironmentName() {
-		return environmentName;
-	}
-
-	@Override
-	public String toString() {
-		return "ClientConfig{" + "host='" + host + '\'' + ", port=" + port
-				+ ", appName='" + appName + '\'' + ", environmentName='"
-				+ environmentName + '\'' + '}';
-	}
+	@Conf(key = "lazydog.app.admin", defaultValue = "false")
+	private Boolean admin;
 }

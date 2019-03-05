@@ -24,10 +24,6 @@
             <groupId>umoo.wang.lazydog</groupId>
             <artifactId>client-springsupport</artifactId>
         </dependency>
-        <dependency>
-            <groupId>umoo.wang.lazydog</groupId>
-            <artifactId>client-core</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

@@ -4,7 +4,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
-import umoo.wang.beanmanager.client.BeanManager;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.util.EnumUtil;
 import umoo.wang.beanmanager.message.Command;
@@ -42,7 +41,8 @@ public class ClientCommandProcessor extends SimpleChannelInboundHandler<Command>
 		case UPDATE_FIELD:
 			ClientFieldUpdateMessage message = (ClientFieldUpdateMessage) command
 					.getCommandObj();
-			BeanManager.update(message.getFieldName(), message.getNewValue());
+			// BeanManager.update(message.getFieldName(),
+			// message.getNewValue());
 			break;
 		default:
 			return false;

@@ -44,5 +44,9 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>umoo.wang.lazydog</groupId>
+            <artifactId>client-socket</artifactId>
+        </dependency>
     </dependencies>
 </project>

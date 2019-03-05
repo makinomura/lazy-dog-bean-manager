@@ -14,6 +14,7 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import lombok.extern.slf4j.Slf4j;
+import umoo.wang.beanmanager.client.socket.Client;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
@@ -65,6 +66,8 @@ public class WebServer {
 					config.getPort());
 			log.info("WebServer start...");
 			f.sync();
+
+			Client.start();
 		} catch (InterruptedException e) {
 			// 出错关闭bossGroup和workerGroup
 			bossGroup.shutdownGracefully();

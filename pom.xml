@@ -42,6 +42,12 @@
             </dependency>
             <dependency>
                 <groupId>umoo.wang.lazydog</groupId>
+                <artifactId>client-socket</artifactId>
+                <version>${project.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>umoo.wang.lazydog</groupId>
                 <artifactId>client-springsupport</artifactId>
                 <version>${project.version}</version>
                 <scope>compile</scope>
