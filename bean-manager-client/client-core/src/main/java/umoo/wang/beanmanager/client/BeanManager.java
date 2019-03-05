@@ -63,12 +63,23 @@ public class BeanManager {
 		return effectFields;
 	}
 
+	public static List<BeanConfig> getBeanConfigs() {
+		return beanConfigs;
+	}
+
 	private static <T> BeanConfig<T> buildBeanConfig(T bean) {
 		Class<T> clazz = (Class<T>) bean.getClass();
 
 		List<FieldConfig<?, T>> fieldConfigs = new ArrayList<>();
 
-		BeanConfig<T> beanConfig = new BeanConfig<>(Manage.UNNAMED, clazz, bean,
+		String beanName = Manage.UNNAMED;
+
+		Manage manage = clazz.getAnnotation(Manage.class);
+		if (manage != null) {
+			beanName = manage.name();
+		}
+
+		BeanConfig<T> beanConfig = new BeanConfig<>(beanName, clazz, bean,
 				fieldConfigs);
 
 		fieldConfigs.addAll(Arrays.stream(clazz.getDeclaredFields())

@@ -27,9 +27,13 @@ import umoo.wang.beanmanager.common.beanfactory.SingletonBeanFactory;
 @Slf4j
 @Bean
 public class WebServer {
-	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager";
+	private final static String[] ROOT_PACKAGE_NAMES = {
+			"umoo.wang.beanmanager.web", "umoo.wang.beanmanager.message",
+			"umoo.wang.beanmanager.persistence",
+			"umoo.wang.beanmanager.cache" };
+
 	public final static BeanFactory beanFactory = new InjectBeanFactory(
-			new SingletonBeanFactory(), ROOT_PACKAGE_NAME);
+			new SingletonBeanFactory(), ROOT_PACKAGE_NAMES);
 	private final static EventLoopGroup bossGroup = new NioEventLoopGroup(
 			Runtime.getRuntime().availableProcessors() * 2);
 	private final static EventLoopGroup workerGroup = new NioEventLoopGroup(

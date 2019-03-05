@@ -1,5 +1,6 @@
 package umoo.wang.beanmanager.message.client;
 
+import umoo.wang.beanmanager.message.client.message.BeanListResMessage;
 import umoo.wang.beanmanager.message.client.message.FieldUpdateMessage;
 
 /**
@@ -7,7 +8,9 @@ import umoo.wang.beanmanager.message.client.message.FieldUpdateMessage;
  */
 public enum ClientCommandTypeEnum {
 	ACK(0, Integer.class.getName()), UPDATE_FIELD(1,
-			FieldUpdateMessage.class.getName());
+			FieldUpdateMessage.class.getName()), REQUIRE_BEAN_LIST(2,
+					Integer.class.getName()), RECEIVE_BEAN_LIST(3,
+							BeanListResMessage.class.getName());
 
 	private String clazz;
 	private int value;

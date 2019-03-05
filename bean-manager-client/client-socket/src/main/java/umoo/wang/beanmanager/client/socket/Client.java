@@ -32,10 +32,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Bean
 public class Client {
-	private final static String ROOT_PACKAGE_NAME = "umoo.wang.beanmanager";
+	private final static String[] ROOT_PACKAGE_NAMES = {
+			"umoo.wang.beanmanager.client", "umoo.wang.beanmanager.message" };
 	// client的对象工厂
 	public final static BeanFactory beanFactory = new InjectBeanFactory(
-			new SingletonBeanFactory(), ROOT_PACKAGE_NAME);
+			new SingletonBeanFactory(), ROOT_PACKAGE_NAMES);
 
 	private HeartBeatTask heartBeatTask;
 	private ChannelFuture channelFuture;
@@ -55,6 +56,10 @@ public class Client {
 
 	public static void start() {
 		beanFactory.getBean(Client.class).connect();
+	}
+
+	public ChannelFuture getChannelFuture() {
+		return channelFuture;
 	}
 
 	public void connect() {

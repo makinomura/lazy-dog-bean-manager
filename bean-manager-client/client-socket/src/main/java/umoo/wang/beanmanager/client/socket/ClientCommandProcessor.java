@@ -5,14 +5,17 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
+import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
+import umoo.wang.beanmanager.common.beanfactory.Inject;
+import umoo.wang.beanmanager.common.beanfactory.PostConstruct;
 import umoo.wang.beanmanager.common.util.EnumUtil;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.CommandTargetEnum;
 import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
-import umoo.wang.beanmanager.message.client.message.FieldUpdateMessage;
 
-import static umoo.wang.beanmanager.client.socket.Client.beanFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by yuanchen on 2019/01/16. Client消息处理器，考虑到后期命令会增多，需要改成链式调用
@@ -22,6 +25,21 @@ import static umoo.wang.beanmanager.client.socket.Client.beanFactory;
 @ChannelHandler.Sharable
 public class ClientCommandProcessor extends SimpleChannelInboundHandler<Command>
 		implements CommandProcessor {
+
+	private List<CommandProcessor> processors = new ArrayList<>();
+
+	@Inject
+	private BeanFactory beanFactory;
+
+	@PostConstruct
+	private void init() {
+		beanFactory
+				.listBean((bean) -> CommandProcessor.class
+						.isAssignableFrom(bean.getClass())
+						&& bean.getClass() != ClientCommandProcessor.class)
+				.stream().map(bean -> (CommandProcessor) bean)
+				.forEach(processors::add);
+	}
 
 	@Override
 	public boolean process(ChannelHandlerContext ctx, Command<?> command) {
@@ -35,20 +53,21 @@ public class ClientCommandProcessor extends SimpleChannelInboundHandler<Command>
 		if (clientCommandTypeEnum == null) {
 			return false;
 		}
-		switch (clientCommandTypeEnum) {
-		case ACK:
-			break;
-		case UPDATE_FIELD:
-			FieldUpdateMessage message = (FieldUpdateMessage) command
-					.getCommandObj();
-			// BeanManager.update(message.getFieldName(),
-			// message.getNewValue());
-			break;
-		default:
-			return false;
+
+		boolean processed = false;
+
+		for (CommandProcessor processor : processors) {
+			processed = processor.process(ctx, command);
+
+			if (processed) {
+				break;
+			}
 		}
 
-		return true;
+		if (!processed) {
+			log.warn("Unsupported command:" + command);
+		}
+		return processed;
 	}
 
 	@Override

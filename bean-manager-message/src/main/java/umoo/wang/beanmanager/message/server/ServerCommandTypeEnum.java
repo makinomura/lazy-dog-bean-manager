@@ -1,5 +1,7 @@
 package umoo.wang.beanmanager.message.server;
 
+import umoo.wang.beanmanager.message.client.message.BeanListResMessage;
+import umoo.wang.beanmanager.message.server.message.BeanListReqMessage;
 import umoo.wang.beanmanager.message.server.message.HeartBeatMessage;
 import umoo.wang.beanmanager.message.server.message.RegisterMessage;
 
@@ -9,7 +11,11 @@ import umoo.wang.beanmanager.message.server.message.RegisterMessage;
 public enum ServerCommandTypeEnum {
 	ACK(0, Integer.class.getName()), HEART_BEAT(1,
 			HeartBeatMessage.class.getName()), REGISTER(2,
-					RegisterMessage.class.getName());
+					RegisterMessage.class.getName()), REQUIRE_CLIENT_BEAN_LIST(
+							3,
+							BeanListReqMessage.class
+									.getName()), RECEIVE_CLIENT_BEAN_LIST(4,
+											BeanListResMessage.class.getName());
 
 	private String clazz;
 	private int value;

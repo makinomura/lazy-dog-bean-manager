@@ -3,9 +3,6 @@ package umoo.wang.beanmanager.server;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
@@ -28,8 +25,6 @@ import java.util.List;
 @ChannelHandler.Sharable
 public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 		implements CommandProcessor {
-	static ChannelGroup channels = new DefaultChannelGroup("clients",
-			GlobalEventExecutor.INSTANCE);
 
 	private List<CommandProcessor> processors = new ArrayList<>();
 
@@ -79,7 +74,6 @@ public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		clientManager.register(ctx);
-		channels.add(ctx.channel());
 	}
 
 	@Override
@@ -91,7 +85,6 @@ public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		clientManager.unregister(ctx);
-		channels.remove(ctx.channel());
 	}
 
 	@Override

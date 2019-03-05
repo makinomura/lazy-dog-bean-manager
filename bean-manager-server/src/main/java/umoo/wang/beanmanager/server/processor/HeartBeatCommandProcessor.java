@@ -17,7 +17,7 @@ import java.util.UUID;
  */
 @Slf4j
 @Bean
-public class ServerHeartBeatCommandProcessor implements CommandProcessor {
+public class HeartBeatCommandProcessor implements CommandProcessor {
 
 	@Override
 	public boolean process(ChannelHandlerContext ctx, Command<?> command) {

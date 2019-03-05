@@ -1,6 +1,7 @@
 package umoo.wang.beanmanager.client.socket;
 
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.Conf;
 
@@ -8,7 +9,8 @@ import umoo.wang.beanmanager.common.beanfactory.Conf;
  * Created by yuanchen on 2019/01/23.
  */
 @Bean
-@Value
+@Data
+@NoArgsConstructor
 public class ClientConfig {
 
 	@Conf(key = "lazydog.server.host")

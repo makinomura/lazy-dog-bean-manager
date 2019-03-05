@@ -21,6 +21,10 @@ public class ClientManager {
 	@Inject
 	private RedisDao redisDao;
 
+	public ContextWrapper getContext(String channelKey) {
+		return contexts.get(channelKey);
+	}
+
 	/**
 	 * 构建key ip:port
 	 *

@@ -22,7 +22,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Bean
-public class ServerRegisterCommandProcessor implements CommandProcessor {
+public class RegisterCommandProcessor implements CommandProcessor {
 
 	@Inject
 	private RedisDao redisDao;

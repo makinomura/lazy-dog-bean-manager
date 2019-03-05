@@ -66,7 +66,13 @@ public class ControllerAdaptor extends AbstractRequestProcessor {
 			method = currentHandleMethod.get();
 		}
 
+
 		try {
+			if (method.getReturnType() == void.class) {
+				method.invoke(controller, request, ctx);
+				return null;
+			}
+
 			return ok(method.invoke(controller, request));
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
@@ -95,8 +101,7 @@ public class ControllerAdaptor extends AbstractRequestProcessor {
 			method.setAccessible(true);
 			Mapping mapping = method.getAnnotation(Mapping.class);
 
-			if (mapping != null && method.getParameterCount() == 1
-					&& method.getParameterTypes()[0] == FullHttpRequest.class) {
+			if (mapping != null) {
 				String path = mapping.path();
 				path = appendPrefix(path);
 

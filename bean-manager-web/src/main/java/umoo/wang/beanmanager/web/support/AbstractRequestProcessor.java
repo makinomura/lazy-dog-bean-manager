@@ -20,25 +20,8 @@ public abstract class AbstractRequestProcessor implements RequestProcessor {
 	protected ChannelHandlerContext ctx;
 	protected FullHttpRequest request;
 
-	@Override
-	public boolean process(ChannelHandlerContext ctx, FullHttpRequest request) {
-		this.ctx = ctx;
-		this.request = request;
-
-		if (!support(request)) {
-			return false;
-		}
-
-		FullHttpResponse response = process(request);
-		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-		return true;
-	}
-
-	public abstract boolean support(FullHttpRequest request);
-
-	public abstract FullHttpResponse process(FullHttpRequest request);
-
-	public FullHttpResponse json(HttpResponseStatus status, Object obj) {
+	public static FullHttpResponse json(ChannelHandlerContext ctx,
+			FullHttpRequest request, HttpResponseStatus status, Object obj) {
 		if (obj == null) {
 			return new DefaultFullHttpResponse(request.protocolVersion(),
 					status);
@@ -60,15 +43,37 @@ public abstract class AbstractRequestProcessor implements RequestProcessor {
 		return response;
 	}
 
+	public abstract boolean support(FullHttpRequest request);
+
+	public abstract FullHttpResponse process(FullHttpRequest request);
+
+	@Override
+	public boolean process(ChannelHandlerContext ctx, FullHttpRequest request) {
+		this.ctx = ctx;
+		this.request = request;
+
+		if (!support(request)) {
+			return false;
+		}
+
+		FullHttpResponse response = process(request);
+		if (response != null) {
+			ctx.writeAndFlush(response)
+					.addListener(ChannelFutureListener.CLOSE);
+		}
+		return true;
+	}
+
 	public FullHttpResponse ok(Object obj) {
-		return json(HttpResponseStatus.OK, obj);
+		return json(ctx, request, HttpResponseStatus.OK, obj);
 	}
 
 	public FullHttpResponse error(Object obj) {
-		return json(HttpResponseStatus.INTERNAL_SERVER_ERROR, obj);
+		return json(ctx, request, HttpResponseStatus.INTERNAL_SERVER_ERROR,
+				obj);
 	}
 
 	public FullHttpResponse notFound(Object obj) {
-		return json(HttpResponseStatus.NOT_FOUND, obj);
+		return json(ctx, request, HttpResponseStatus.NOT_FOUND, obj);
 	}
 }
