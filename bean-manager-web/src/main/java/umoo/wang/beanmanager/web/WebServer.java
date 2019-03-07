@@ -70,12 +70,17 @@ public class WebServer {
 					config.getPort());
 			log.info("WebServer start...");
 			f.sync();
-
-			Client.start();
 		} catch (InterruptedException e) {
 			// 出错关闭bossGroup和workerGroup
 			bossGroup.shutdownGracefully();
 			workerGroup.shutdownGracefully();
 		}
+	}
+
+	@Bean
+	public ChannelFuture serverChannel() {
+		Client.start();
+
+		return Client.beanFactory.getBean(Client.class).getChannelFuture();
 	}
 }

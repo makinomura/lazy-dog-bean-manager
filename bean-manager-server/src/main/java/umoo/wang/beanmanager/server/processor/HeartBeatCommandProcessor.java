@@ -10,8 +10,6 @@ import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
 import umoo.wang.beanmanager.message.server.message.HeartBeatMessage;
 
-import java.util.UUID;
-
 /**
  * Created by yuanchen on 2019/01/23.
  */
@@ -30,9 +28,7 @@ public class HeartBeatCommandProcessor implements CommandProcessor {
 					+ " ,duration :" + (System.currentTimeMillis() - timestamp)
 					+ "ms");
 
-			Command<?> result = Command.builder()
-					.commandId(UUID.randomUUID().toString())
-					.timestamps(System.currentTimeMillis())
+			Command<?> result = Command.builderWithDefault()
 					.replyTo(command.getCommandId())
 					.commandTarget(CommandTargetEnum.CLIENT.value())
 					.commandType(ClientCommandTypeEnum.ACK.value())

@@ -42,4 +42,9 @@ public class Command<T> {
 				+ ", commandType=" + commandType + ", commandObj=" + commandObj
 				+ '}';
 	}
+
+	public static CommandBuilder<Object> builderWithDefault() {
+		return builder().commandId(UUID.randomUUID().toString())
+				.timestamps(System.currentTimeMillis());
+	}
 }

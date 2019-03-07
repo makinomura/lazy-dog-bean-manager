@@ -10,8 +10,6 @@ import umoo.wang.beanmanager.message.client.ClientCommandTypeEnum;
 import umoo.wang.beanmanager.message.client.message.BeanListResMessage;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
 
-import java.util.UUID;
-
 /**
  * Created by yuanchen on 2019/03/05.
  */
@@ -24,9 +22,7 @@ public class RequireBeanListCommandProcessor implements CommandProcessor {
 			return false;
 		}
 
-		Command<?> receiveBeanListCommand = Command.builder()
-				.commandId(UUID.randomUUID().toString())
-				.replyTo(command.getCommandId())
+		Command<?> receiveBeanListCommand = Command.builderWithDefault()
 				.timestamps(System.currentTimeMillis())
 				.commandTarget(CommandTargetEnum.SERVER.value())
 				.commandType(

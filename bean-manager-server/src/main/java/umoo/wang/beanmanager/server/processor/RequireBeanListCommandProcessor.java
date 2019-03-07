@@ -14,7 +14,6 @@ import umoo.wang.beanmanager.message.server.message.BeanListReqMessage;
 import umoo.wang.beanmanager.server.ClientManager;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * Created by yuanchen on 2019/03/05.
@@ -41,9 +40,7 @@ public class RequireBeanListCommandProcessor implements CommandProcessor {
 
 		if (context != null) {
 
-			Command<?> requireBeanListCommand = Command.builder()
-					.commandId(UUID.randomUUID().toString())
-					.timestamps(System.currentTimeMillis())
+			Command<?> requireBeanListCommand = Command.builderWithDefault()
 					.commandTarget(CommandTargetEnum.CLIENT.value())
 					.commandType(
 							ClientCommandTypeEnum.REQUIRE_BEAN_LIST.value())
@@ -55,9 +52,7 @@ public class RequireBeanListCommandProcessor implements CommandProcessor {
 							BeanListResMessage message = (BeanListResMessage) result;
 
 							Command<?> receiveBeanListCommand = Command
-									.builder()
-									.commandId(UUID.randomUUID().toString())
-									.timestamps(System.currentTimeMillis())
+									.builderWithDefault()
 									.replyTo(command.getCommandId())
 									.commandTarget(
 											CommandTargetEnum.CLIENT.value())
@@ -78,9 +73,7 @@ public class RequireBeanListCommandProcessor implements CommandProcessor {
 	}
 
 	private void failed(ChannelHandlerContext ctx, Command<?> command) {
-		Command<?> receiveBeanListCommand = Command.builder()
-				.commandId(UUID.randomUUID().toString())
-				.timestamps(System.currentTimeMillis())
+		Command<?> receiveBeanListCommand = Command.builderWithDefault()
 				.replyTo(command.getCommandId())
 				.commandTarget(CommandTargetEnum.CLIENT.value())
 				.commandType(ClientCommandTypeEnum.RECEIVE_BEAN_LIST.value())
