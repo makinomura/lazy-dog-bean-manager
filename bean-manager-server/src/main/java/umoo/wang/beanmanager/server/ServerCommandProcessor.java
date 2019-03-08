@@ -3,11 +3,7 @@ package umoo.wang.beanmanager.server;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.util.concurrent.GlobalEventExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.BeanFactory;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
@@ -24,14 +20,11 @@ import java.util.List;
 /**
  * Created by yuanchen on 2019/01/16.
  */
+@Slf4j
 @Bean
 @ChannelHandler.Sharable
 public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 		implements CommandProcessor {
-	private final static Logger logger = LoggerFactory
-			.getLogger(ServerCommandProcessor.class);
-	static ChannelGroup channels = new DefaultChannelGroup("clients",
-			GlobalEventExecutor.INSTANCE);
 
 	private List<CommandProcessor> processors = new ArrayList<>();
 
@@ -73,7 +66,7 @@ public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 		}
 
 		if (!processed) {
-			logger.warn("Unsupported command:" + command);
+			log.warn("Unsupported command:" + command);
 		}
 		return processed;
 	}
@@ -81,7 +74,6 @@ public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		clientManager.register(ctx);
-		channels.add(ctx.channel());
 	}
 
 	@Override
@@ -93,7 +85,6 @@ public class ServerCommandProcessor extends SimpleChannelInboundHandler<Command>
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		clientManager.unregister(ctx);
-		channels.remove(ctx.channel());
 	}
 
 	@Override

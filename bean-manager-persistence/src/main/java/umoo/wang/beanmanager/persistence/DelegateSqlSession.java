@@ -1,5 +1,6 @@
 package umoo.wang.beanmanager.persistence;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;
@@ -7,8 +8,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import umoo.wang.beanmanager.persistence.support.DynamicMapperCreator;
 import umoo.wang.beanmanager.persistence.support.Mapper;
 import umoo.wang.beanmanager.persistence.support.PrimaryKey;
@@ -24,11 +23,8 @@ import java.util.Map;
  * 
  * @see DelegateSqlSession#getMapper
  */
+@Slf4j
 public class DelegateSqlSession implements SqlSession {
-
-	private final static Logger logger = LoggerFactory
-			.getLogger(DelegateSqlSession.class);
-
 	private SqlSession delegate;
 
 	private DynamicMapperCreator mapperCreator;
@@ -53,7 +49,7 @@ public class DelegateSqlSession implements SqlSession {
 			try {
 				runnable.run();
 			} catch (Exception e) {
-				logger.error("afterCommitRunners", e);
+				log.error("afterCommitRunners", e);
 			}
 
 			iterator.remove();

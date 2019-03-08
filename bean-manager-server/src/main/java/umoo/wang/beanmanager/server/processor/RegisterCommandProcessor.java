@@ -1,15 +1,14 @@
 package umoo.wang.beanmanager.server.processor;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import umoo.wang.beanmanager.cache.dao.RedisDao;
 import umoo.wang.beanmanager.common.beanfactory.Bean;
 import umoo.wang.beanmanager.common.beanfactory.Inject;
 import umoo.wang.beanmanager.message.Command;
 import umoo.wang.beanmanager.message.CommandProcessor;
 import umoo.wang.beanmanager.message.server.ServerCommandTypeEnum;
-import umoo.wang.beanmanager.message.server.message.ServerRegisterMessage;
+import umoo.wang.beanmanager.message.server.message.RegisterMessage;
 import umoo.wang.beanmanager.persistence.dao.MysqlDao;
 import umoo.wang.beanmanager.persistence.entity.App;
 import umoo.wang.beanmanager.server.ClientManager;
@@ -21,10 +20,9 @@ import java.util.Objects;
 /**
  * Created by yuanchen on 2019/01/23.
  */
+@Slf4j
 @Bean
-public class ServerRegisterCommandProcessor implements CommandProcessor {
-	private final static Logger logger = LoggerFactory
-			.getLogger(ServerRegisterCommandProcessor.class);
+public class RegisterCommandProcessor implements CommandProcessor {
 
 	@Inject
 	private RedisDao redisDao;
@@ -38,7 +36,7 @@ public class ServerRegisterCommandProcessor implements CommandProcessor {
 
 		if (command.getCommandType() == ServerCommandTypeEnum.REGISTER
 				.value()) {
-			ServerRegisterMessage msg = (ServerRegisterMessage) command
+			RegisterMessage msg = (RegisterMessage) command
 					.getCommandObj();
 
 			List<App> appList = mysqlDao.listApp();
@@ -46,7 +44,7 @@ public class ServerRegisterCommandProcessor implements CommandProcessor {
 			appList.stream().filter(
 					app -> Objects.equals(app.getAppName(), msg.getAppName()))
 					.findAny().ifPresent(app -> {
-						logger.info(
+						log.info(
 								"Client register:" + command.getCommandObj());
 
 						// 设置Client信息
