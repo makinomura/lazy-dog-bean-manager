@@ -28,6 +28,7 @@ public class DynamicMapperCreator {
 			+ OBJECT_CLASS_NAME + ";L" + MAPPER_INTERFACE_NAME + "<L%s;L%s;>;";
 	private final static String ANONYMOUS_MAPPER_CLASS_NAME = MAPPER_INTERFACE_NAME
 			+ "$%s";
+	private static ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 	private static Method defineClazzMethod;
 
 	static {
@@ -50,8 +51,7 @@ public class DynamicMapperCreator {
 
 	private static Class<?> loadMapperClazz(byte[] bytes)
 			throws InvocationTargetException, IllegalAccessException {
-		return (Class<?>) defineClazzMethod.invoke(
-				ClassLoader.getSystemClassLoader(), null, bytes, 0,
+		return (Class<?>) defineClazzMethod.invoke(classLoader, null, bytes, 0,
 				bytes.length);
 	}
 
@@ -60,9 +60,17 @@ public class DynamicMapperCreator {
 
 		if (mapperClazz != null) {
 			return mapperClazz;
-		} else {
-			return createMapperClazz(entityClazz);
 		}
+
+		try {
+			mapperClazz = classLoader.loadClass(String.format(
+					ANONYMOUS_MAPPER_CLASS_NAME, entityClazz.getSimpleName()));
+		} catch (ClassNotFoundException ignore) {
+			mapperClazz = createMapperClazz(entityClazz);
+		}
+
+		mappers.put(entityClazz, mapperClazz);
+		return mapperClazz;
 	}
 
 	public Class<?> createMapperClazz(Class<?> entityClazz) {
@@ -72,10 +80,7 @@ public class DynamicMapperCreator {
 		}
 
 		try {
-			Class<?> mapperClazz = buildAnonymousMapperClazz(entityClazz);
-
-			mappers.put(entityClazz, mapperClazz);
-			return mapperClazz;
+			return buildAnonymousMapperClazz(entityClazz);
 		} catch (InvocationTargetException | IllegalAccessException e) {
 			throw ManagerException.wrap(e);
 		}
